@@ -174,7 +174,7 @@ void SamcoPreferences::LoadPresets()
       // Any digital pin is fine for NeoPixels.
     #ifdef CUSTOM_NEOPIXEL
         #define LED_ENABLE
-        pins.customLEDpin = -1;
+        pins.oPixel = -1;
     #endif // CUSTOM_NEOPIXEL
 
     pins.oRumble = 24;
