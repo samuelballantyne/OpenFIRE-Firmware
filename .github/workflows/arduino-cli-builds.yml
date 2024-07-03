@@ -73,7 +73,7 @@ jobs:
         run: arduino-cli core install rp2040:rp2040 --additional-urls https://github.com/SeongGino/arduino-pico/releases/download/3.9.2-fix/package_rp2040_fix_index_orig.json
         
       - name: Compile for ${{ matrix.name }}
-        run: arduino-cli compile -e --fqbn rp2040:rp2040:${{matrix.fqbn}}:${{matrix.flags}} SamcoEnhanced --libraries libraries
+        run: arduino-cli compile -e --fqbn rp2040:rp2040:${{matrix.fqbn}}:${{matrix.flags}} SamcoEnhanced --libraries libraries --build-property "build.extra_flags=-DUSES_DISPLAY=1 -DPLAYER_NUMBER=1 -DUSES_SOLENOID=1 -DUSES_RUMBLE=1 -DUSES_SWITCHES=1 -DMAMEHOOKER=1 -DUSES_ANALOG=1 -DCUSTOM_NEOPIXEL=1 -DFOURPIN_LED=1 -DDUAL_CORE=1"
         
       - name: Rename build file
         run: cp ${{github.workspace}}/SamcoEnhanced/build/rp2040.rp2040.${{matrix.fqbn}}/SamcoEnhanced.ino.uf2 OpenFIREfw.${{ matrix.pretty }}.uf2
