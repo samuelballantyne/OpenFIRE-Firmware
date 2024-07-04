@@ -119,7 +119,7 @@ void FFB::FFBRelease()
         }
     }
     
-    // If Rumble FF is enabled and Autofire is enabled, the motor needs to be disabled when the trigger is released. Otherwise allow RumbleActivation to deal with the activation timer
+    // If Rumble FF is enabled and Autofire is enabled, the motor needs to be disabled when the trigger is released. Otherwise, allow RumbleActivation to deal with the activation timer
     if(SamcoPreferences::toggles.rumbleFF && SamcoPreferences::toggles.autofireActive) {
         if(rumbleHappening || rumbleHappened) {
             digitalWrite(SamcoPreferences::pins.oRumble, LOW);      // Make sure the rumble is OFF.
