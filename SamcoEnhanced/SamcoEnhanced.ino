@@ -787,7 +787,8 @@ void FeedbackSet()
     if(SamcoPreferences::pins.oPixel >= 0) {
         externPixel = new Adafruit_NeoPixel(SamcoPreferences::settings.customLEDcount, SamcoPreferences::pins.oPixel, NEO_GRB + NEO_KHZ800);
         externPixel->begin();
-        if(SamcoPreferences::settings.customLEDstatic < SamcoPreferences::settings.customLEDcount) {
+        if(SamcoPreferences::settings.customLEDstatic > 0 &&
+           SamcoPreferences::settings.customLEDstatic <= SamcoPreferences::settings.customLEDcount) {
             for(byte i = 0; i < SamcoPreferences::settings.customLEDstatic; i++) {
                 uint32_t color;
                 switch(i) {
