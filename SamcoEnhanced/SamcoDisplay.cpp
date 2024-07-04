@@ -430,6 +430,7 @@ void ExtDisplay::PauseProfileUpdate(uint8_t selection, char name1[16], char name
             display->setTextColor(WHITE, BLACK);
             display->setCursor(4, 47);
             display->println(name4);
+            break;
           case 3:
             display->setTextColor(WHITE, BLACK);
             display->setCursor(4, 25);
