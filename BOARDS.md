@@ -20,7 +20,7 @@
                      C Button     2  |-)       (x| 3V3 En
                      Start        3  |-)       (p| 3V3 Out (to Display/Cam/Analog Inputs)
                      Select       4  |-)       (x| ADCVREF
-                     Home Button  5  |-)       (-|  A2 *Unmapped*
+                     Home Button  5  |-)       (-|  A2 Temp Sensor
                                  GND |x)       (x| AGND (for ADC VREF)
                      D-Pad Up     6  |-)       (-|  A1 *Unmapped*
                      D-Pad Down   7  |-)       (-|  A0 *Unmapped*
