@@ -532,8 +532,8 @@ void setup() {
 
     #ifdef ARDUINO_ADAFRUIT_ITSYBITSY_RP2040
         // SAMCO 1.1 needs Pin 5 normally HIGH for the camera
-        pinMode(5, OUTPUT);
-        digitalWrite(5, HIGH);
+        pinMode(14, OUTPUT);
+        digitalWrite(14, HIGH);
     #endif // ARDUINO_ADAFRUIT_ITSYBITSY_RP2040
 
     SamcoPreferences::LoadPresets();
