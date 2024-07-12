@@ -2346,6 +2346,9 @@ void SerialProcessingDocked()
                         //Serial.print("Now calibrating selected profile: ");
                         //Serial.println(profileDesc[selectedProfile].profileLabel);
                         SetMode(GunMode_Calibration);
+                        // UGLY: just run the method if we're in initial boot
+                        // (assuming the user started their first cali from the app and not the trigger pull prompt)
+                        if(justBooted) { ExecCalMode(); }
                     }
                 }
                 break;
