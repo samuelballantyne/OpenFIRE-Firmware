@@ -10,11 +10,14 @@
                                         Symbol Legend:
                        (x) = GND/No Connect | (-) = GPIO | (p) = Power
 ```
+
+### NOTE: Any button/function GPIO pin assignments written here are the *defaults*, and can be changed for any other function from the OpenFIRE App.
+
 ## Raspberry Pi Pico (Non/W)
 ```
 
                                         (_____)
-                     A Button     0  |-) *USB* (-| VBUS (USB 5V Out)
+                     A Button     0  |-) *USB* (-| VBUS (USB voltage)
                      B Button     1  |-)       (-| VSYS (Input from Battery/Output to NeoPixels)
                                  GND |x)       (x| GND
                      C Button     2  |-)       (x| 3V3 En
@@ -42,8 +45,8 @@
                                         (_____)
                                RST |x)   *USB*   (p| BAT (Battery Input)
                                3V3 |p)           (x| GND
-   (Display/Cam/Rumble/Analog) 3V3 |p)           (p| USB (5V Out)
-                               VHi |p)           (-|  11 C Button
+   (Display/Cam/Rumble/Analog) 3V3 |p)           (p| USB (5V USB voltage, to NeoPixels)
+            (VSYS-like Output) VHi |p)           (-|  11 C Button
                B Button        A0  |-)           (-|  10 D-Pad Right
                A Button        A1  |-)           (-|  9  D-Pad Up
                Start           A2  |-)           (-|  8  D-Pad Left
@@ -63,7 +66,7 @@
 ```
                                         (_____)
                    (USB Data+)  D+ |x)   *USB*   (x| D-  (USB Data-)
-               *Unmapped*       0  |-)           (p| RAW (5V, to NeoPixels)
+               *Unmapped*       0  |-)           (p| RAW (5V USB voltage, to NeoPixels)
                *Unmapped*       1  |-)           (x| GND
                                GND |x)           (x| RST
                                GND |x)           (p| 3V3 (Display/Cam/Rumble/Analog)
@@ -92,7 +95,7 @@
                 Camera SCL      13  |x)           (-|  16 *Unmapped*
                 *N/C*           A6  |x)           (-|  15 *Unmapped*
                 *N/C*           A7  |x)           (-|  25 *Unmapped*
-                 (to NeoPixels)  5V |p)           (x| GND
+    (USB voltage, to NeoPixels)  5V |p)           (x| GND
                 *Unmapped*      REC |x)           (x| RST
                 *Unmapped*      GND |x)           (-|  1  Pedal
                 *Unmapped*      VIN |p)           (-|  0  Trigger
@@ -104,7 +107,7 @@
 ```
 
                                          (_____)
-                (to NeoPixels)  5V |p)    *USB*    (-|  0  Trigger
+   (USB voltage, to NeoPixels)  5V |p)    *USB*    (-|  0  Trigger
                                GND |x)             (-|  1  A Button
    (Display/Cam/Rumble/Analog) 3V3 |p)             (-|  2  B Button
                Temp Sensor     A3  |-)             (-|  3  C Button
