@@ -1430,7 +1430,9 @@ void ExecRunMode()
                 unsigned long t = millis();
                 if(t - pauseHoldStartstamp > SamcoPreferences::settings.pauseHoldLength) {
                     // MAKE SURE EVERYTHING IS DISENGAGED:
-                    #ifdef USES_SOLENOID
+                    OF_FFB.FFBShutdown();
+		    /*
+		    #ifdef USES_SOLENOID
                         digitalWrite(SamcoPreferences::pins.oSolenoid, LOW);
                         solenoidFirstShot = false;
                     #endif // USES_SOLENOID
@@ -1439,14 +1441,17 @@ void ExecRunMode()
                         rumbleHappening = false;
                         rumbleHappened = false;
                     #endif // USES_RUMBLE
-                    Keyboard.releaseAll();
+                    */
+		    Keyboard.releaseAll();
                     AbsMouse5.releaseAll();
                     offscreenBShot = false;
                     buttonPressed = false;
-                    triggerHeld = false;
+                    /*
+		    triggerHeld = false;
                     burstFiring = false;
                     burstFireCount = 0;
-                    pauseModeSelection = PauseMode_Calibrate;
+                    */
+	    	    pauseModeSelection = PauseMode_Calibrate;
                     SetMode(GunMode_Pause);
                     buttons.ReportDisable();
                     return;
@@ -1455,7 +1460,9 @@ void ExecRunMode()
         } else {
             if(buttons.pressedReleased == EnterPauseModeBtnMask || buttons.pressedReleased == BtnMask_Home) {
                 // MAKE SURE EVERYTHING IS DISENGAGED:
-                #ifdef USES_SOLENOID
+                OF_FFB.FFBShutdown();
+		/*
+		#ifdef USES_SOLENOID
                     digitalWrite(SamcoPreferences::pins.oSolenoid, LOW);
                     solenoidFirstShot = false;
                 #endif // USES_SOLENOID
@@ -1464,14 +1471,17 @@ void ExecRunMode()
                     rumbleHappening = false;
                     rumbleHappened = false;
                 #endif // USES_RUMBLE
-                Keyboard.releaseAll();
+                */
+		Keyboard.releaseAll();
                 AbsMouse5.releaseAll();
                 offscreenBShot = false;
                 buttonPressed = false;
-                triggerHeld = false;
+                /*
+		triggerHeld = false;
                 burstFiring = false;
                 burstFireCount = 0;
-                SetMode(GunMode_Pause);
+                */
+		SetMode(GunMode_Pause);
                 buttons.ReportDisable();
                 return;
             }
