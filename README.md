@@ -1,3 +1,5 @@
+### Like our work? [Remember to support the maintainers!](https://github.com/TeamOpenFIRE/.github/blob/main/profile/README.md)
+
 ![BannerDark](of_bannerLoD.png#gh-dark-mode-only)![BannerLight](of_bannerDoL.png#gh-light-mode-only)
 # OpenFIRE - The Open *Four Infa-Red Emitter* Light Gun System
 ###### Successor to [GUN4ALL](http://github.com/SeongGino/ir-light-gun-plus), which is based on the [Prow Enhanced fork](https://github.com/Prow7/ir-light-gun), which in itself is based on the 4IR Beta "Big Code Update" [SAMCO project](https://github.com/samuelballantyne/IR-Light-Gun)
