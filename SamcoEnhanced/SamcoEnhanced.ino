@@ -1749,6 +1749,7 @@ void ExecCalMode()
     AbsMouse5.move(32768/2, 32768/2);
     // jack in, CaliMan, execute!!!
     SetMode(GunMode_Calibration);
+    Serial.printf("CalStage: %d\r\n", Cali_Init);
     while(gunMode == GunMode_Calibration) {
         buttons.Poll(1);
 
@@ -1758,7 +1759,7 @@ void ExecCalMode()
         }
         
         if((buttons.pressedReleased & (ExitPauseModeBtnMask | ExitPauseModeHoldBtnMask)) && !justBooted) {
-            Serial.println("Calibration cancelled");
+            Serial.printf("CalStage: %d\r\n", Cali_Verify+1);
             // Reapplying backed up data
             profileData[selectedProfile].topOffset = _topOffset;
             profileData[selectedProfile].bottomOffset = _bottomOffset;
@@ -1781,6 +1782,9 @@ void ExecCalMode()
             return;
         } else if(buttons.pressed == BtnMask_Trigger) {
             calStage++;
+            Serial.printf("CalStage: %d\r\n", calStage);
+            // make sure our messages go through, or else the HID reports eats UART.
+            Serial.flush();
             CaliMousePosMove(calStage);
             switch(calStage) {
                 case Cali_Init:
@@ -1814,7 +1818,7 @@ void ExecCalMode()
                   // Set Offset buffer
                   topOffset = mouseY;
                   // Move to bottom calibration point
-                  AbsMouse5.move(32768/2, 32767);
+                  AbsMouse5.move(32768/2, 32766);
                   break;
 
                 case Cali_Left:
@@ -1828,7 +1832,7 @@ void ExecCalMode()
                   // Set Offset buffer
                   leftOffset = mouseX;
                   // Move to right calibration point
-                  AbsMouse5.move(32767, 32768/2);
+                  AbsMouse5.move(32766, 32768/2);
                   break;
 
                 case Cali_Center:
@@ -1868,20 +1872,22 @@ void ExecCalMode()
                       // If it's good, move onto cali finish.
                       if(buttons.pressed == BtnMask_Trigger) {
                           calStage++;
-                          SetMode(GunMode_Run);
+                          // stay in Verification Mode, as the code outside of the Cali loop will catch us.
+                          break;
                       // Press A/B to restart cali for current profile
                       } else if(buttons.pressedReleased & ExitPauseModeHoldBtnMask) {
                           calStage = 0;
+                          Serial.printf("CalStage: %d\r\n", Cali_Init);
+                          Serial.flush();
                           // (re)set current values to factory defaults
                           profileData[selectedProfile].topOffset = 0, profileData[selectedProfile].bottomOffset = 0,
                           profileData[selectedProfile].leftOffset = 0, profileData[selectedProfile].rightOffset = 0;
                           profileData[selectedProfile].adjX = 512 << 2, profileData[selectedProfile].adjY = 384 << 2;
                           SetMode(GunMode_Calibration);
-                          delay(1);
                           AbsMouse5.move(32768/2, 32768/2);
                       // Press C/Home to exit wholesale without committing new cali values
                       } else if(buttons.pressedReleased & ExitPauseModeBtnMask && !justBooted) {
-                          Serial.println("Calibration cancelled");
+                          Serial.printf("CalStage: %d\r\n", Cali_Verify+1);
                           // Reapplying backed up data
                           profileData[selectedProfile].topOffset = _topOffset;
                           profileData[selectedProfile].bottomOffset = _bottomOffset;
@@ -1913,8 +1919,7 @@ void ExecCalMode()
         stateFlags |= StateFlag_SavePreferencesEn;
         SavePreferences();
     } else if(dockedCalibrating) {
-        Serial.print("UpdatedProf: ");
-        Serial.println(selectedProfile);
+        Serial.printf("UpdatedProf: %d\r\n", selectedProfile);
         Serial.println(profileData[selectedProfile].topOffset);
         Serial.println(profileData[selectedProfile].bottomOffset);
         Serial.println(profileData[selectedProfile].leftOffset);
@@ -1924,20 +1929,22 @@ void ExecCalMode()
         //Serial.println(profileData[selectedProfile].adjX);
         //Serial.println(profileData[selectedProfile].adjY);
         SetMode(GunMode_Docked);
+        dockedCalibrating = false;
     } else {
         SetMode(GunMode_Run);
     }
     #ifdef USES_RUMBLE
         if(SamcoPreferences::toggles.rumbleActive) {
-            digitalWrite(SamcoPreferences::pins.oRumble, true);
+            analogWrite(SamcoPreferences::pins.oRumble, SamcoPreferences::settings.rumbleIntensity);
             delay(80);
             digitalWrite(SamcoPreferences::pins.oRumble, false);
             delay(50);
-            digitalWrite(SamcoPreferences::pins.oRumble, true);
+            analogWrite(SamcoPreferences::pins.oRumble, SamcoPreferences::settings.rumbleIntensity);
             delay(125);
             digitalWrite(SamcoPreferences::pins.oRumble, false);
         }
     #endif // USES_RUMBLE
+    Serial.printf("CalStage: %d\r\n", Cali_Verify+1);
 }
 
 // Locking function moving from cali point to point
@@ -1960,7 +1967,7 @@ void CaliMousePosMove(uint8_t caseNumber)
           break;
         case Cali_Bottom:
           for(yPos = 0; yPos < 32767; yPos = yPos + 30) {
-              if(yPos > 32767-31) { yPos = 32767; }
+              if(yPos > 32767-31) { yPos = 32766; }
               AbsMouse5.move(32768/2, yPos);
           }
           delay(5);
@@ -1977,7 +1984,7 @@ void CaliMousePosMove(uint8_t caseNumber)
           break;
         case Cali_Right:
           for(xPos = 0; xPos < 32767; xPos = xPos + 30) {
-              if(xPos > 32767-31) { xPos = 32767; }
+              if(xPos > 32767-31) { xPos = 32766; }
               AbsMouse5.move(xPos, 32768/2);
           }
           delay(5);
