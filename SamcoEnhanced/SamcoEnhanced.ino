@@ -3092,14 +3092,20 @@ void SerialProcessing()
                     // gamepad
                     case '1':
                       buttons.analogOutput = true;
-                      if(Serial.peek() == 'L' || Serial.peek() == 'R') {
-                          Gamepad16.stickRight = !constrain(Serial.read() - 'L', 0, 1);
-                      }
+                      Gamepad16.stickRight = (Serial.peek() == 'L') ? true: false;
                       break;
                 }
                 AbsMouse5.releaseAll();
                 Keyboard.releaseAll();
                 Gamepad16.releaseAll();
+                #ifdef USES_DISPLAY
+                    if(!serialMode && gunMode == GunMode_Run) { OLED.ScreenModeChange(ExtDisplay::Screen_Normal, buttons.analogOutput); }
+                    else if(serialMode && gunMode == GunMode_Run &&
+                            OLED.serialDisplayType > ExtDisplay::ScreenSerial_None &&
+                            OLED.serialDisplayType < ExtDisplay::ScreenSerial_Both) {
+                        OLED.ScreenModeChange(ExtDisplay::Screen_Mamehook_Single, buttons.analogOutput);
+                    }
+                #endif // USES_DISPLAY
                 break;
               // offscreen button mode
               case '1':
@@ -3293,52 +3299,6 @@ void SerialProcessing()
         case 'X':
           serialInput = Serial.read();
           switch(serialInput) {
-              // Toggle Gamepad Output Mode
-              case 'A':
-                serialInput = Serial.read();
-                switch(serialInput) {
-                    case 'L':
-                      if(!buttons.analogOutput) {
-                          buttons.analogOutput = true;
-                          AbsMouse5.releaseAll();
-                          Keyboard.releaseAll();
-                          Serial.println("Switched to Analog Output mode!");
-                      }
-                      Gamepad16.stickRight = true;
-                      Serial.println("Setting camera to the Left Stick.");
-                      break;
-                    case 'R':
-                      if(!buttons.analogOutput) {
-                          buttons.analogOutput = true;
-                          AbsMouse5.releaseAll();
-                          Keyboard.releaseAll();
-                          Serial.println("Switched to Analog Output mode!");
-                      }
-                      Gamepad16.stickRight = false;
-                      Serial.println("Setting camera to the Right Stick.");
-                      break;
-                    default:
-                      buttons.analogOutput = !buttons.analogOutput;
-                      if(buttons.analogOutput) {
-                          AbsMouse5.releaseAll();
-                          Keyboard.releaseAll();
-                          Serial.println("Switched to Analog Output mode!");
-                      } else {
-                          Gamepad16.releaseAll();
-                          Keyboard.releaseAll();
-                          Serial.println("Switched to Mouse Output mode!");
-                      }
-                      break;
-                }
-                #ifdef USES_DISPLAY
-                    if(!serialMode && gunMode == GunMode_Run) { OLED.ScreenModeChange(ExtDisplay::Screen_Normal, buttons.analogOutput); }
-                    else if(serialMode && gunMode == GunMode_Run &&
-                            OLED.serialDisplayType > ExtDisplay::ScreenSerial_None &&
-                            OLED.serialDisplayType < ExtDisplay::ScreenSerial_Both) {
-                        OLED.ScreenModeChange(ExtDisplay::Screen_Mamehook_Single, buttons.analogOutput);
-                    }
-                #endif // USES_DISPLAY
-                break;
               // Set Autofire Interval Length
               case 'I':
                 serialInput = Serial.read();
