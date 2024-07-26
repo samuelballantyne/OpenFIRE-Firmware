@@ -3290,6 +3290,10 @@ void SerialProcessing()
                   #endif // USES_SOLENOID
                   AbsMouse5.releaseAll();
                   Keyboard.releaseAll();
+                  LightgunButtons::ButtonDesc[BtnIdx_Pedal].reportType = pedalOrigButtonType1;
+                  LightgunButtons::ButtonDesc[BtnIdx_Pedal].reportCode = pedalOrigButtonCode1;
+                  LightgunButtons::ButtonDesc[BtnIdx_Pedal].reportType2 = pedalOrigButtonType2;
+                  LightgunButtons::ButtonDesc[BtnIdx_Pedal].reportCode2 = pedalOrigButtonCode2;
                   Serial.println("Received end serial pulse, releasing FF override.");
               }
               break;
