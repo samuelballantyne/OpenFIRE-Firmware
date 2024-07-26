@@ -3118,12 +3118,24 @@ void SerialProcessing()
                     case '0':
                       if(serialMode) { offscreenButtonSerial = false; }
                       else { offscreenButton = false; }
+                      if(SamcoPreferences::toggles.lowButtonMode) {
+                          LightgunButtons::ButtonDesc[BtnIdx_A].reportType = LightgunButtons::ReportType_Mouse;
+                          LightgunButtons::ButtonDesc[BtnIdx_A].reportCode = MOUSE_RIGHT;
+                          LightgunButtons::ButtonDesc[BtnIdx_B].reportType = LightgunButtons::ReportType_Mouse;
+                          LightgunButtons::ButtonDesc[BtnIdx_B].reportCode = MOUSE_MIDDLE;
+                      }
                       break;
                     // offscreen button
                     case '2':
                       if(serialMode) { offscreenButtonSerial = true; }
                       // eh, might be useful for Linux Supermodel users.
                       else { offscreenButton = true; }
+                      if(SamcoPreferences::toggles.lowButtonMode) {
+                          LightgunButtons::ButtonDesc[BtnIdx_A].reportType = LightgunButtons::ReportType_Mouse;
+                          LightgunButtons::ButtonDesc[BtnIdx_A].reportCode = MOUSE_MIDDLE;
+                          LightgunButtons::ButtonDesc[BtnIdx_B].reportType = LightgunButtons::ReportType_Mouse;
+                          LightgunButtons::ButtonDesc[BtnIdx_B].reportCode = MOUSE_RIGHT;
+                      }
                       break;
                 }
                 break;
@@ -3297,6 +3309,12 @@ void SerialProcessing()
                   LightgunButtons::ButtonDesc[BtnIdx_Pedal].reportCode = pedalOrigButtonCode1;
                   LightgunButtons::ButtonDesc[BtnIdx_Pedal].reportType2 = pedalOrigButtonType2;
                   LightgunButtons::ButtonDesc[BtnIdx_Pedal].reportCode2 = pedalOrigButtonCode2;
+                  if(SamcoPreferences::toggles.lowButtonMode) {
+                      LightgunButtons::ButtonDesc[BtnIdx_A].reportType = LightgunButtons::ReportType_Mouse;
+                      LightgunButtons::ButtonDesc[BtnIdx_A].reportCode = MOUSE_RIGHT;
+                      LightgunButtons::ButtonDesc[BtnIdx_B].reportType = LightgunButtons::ReportType_Mouse;
+                      LightgunButtons::ButtonDesc[BtnIdx_B].reportCode = MOUSE_MIDDLE;
+                  }
                   Serial.println("Received end serial pulse, releasing FF override.");
               }
               break;
