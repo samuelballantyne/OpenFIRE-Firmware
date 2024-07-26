@@ -224,6 +224,13 @@ LightgunButtonsStatic<ButtonCount> lgbData;
 // button object instance
 LightgunButtons buttons(lgbData, ButtonCount);
 
+uint8_t pedalOrigButtonType1 = LightgunButtons::ButtonDesc[BtnIdx_Pedal].reportType;
+uint8_t pedalOrigButtonCode1 = LightgunButtons::ButtonDesc[BtnIdx_Pedal].reportCode;
+uint8_t pedalOrigButtonType2 = LightgunButtons::ButtonDesc[BtnIdx_Pedal].reportType2;
+uint8_t pedalOrigButtonCode2 = LightgunButtons::ButtonDesc[BtnIdx_Pedal].reportCode2;
+uint8_t pedalOrigButtonType3 = LightgunButtons::ButtonDesc[BtnIdx_Pedal].reportType3;
+uint8_t pedalOrigButtonCode3 = LightgunButtons::ButtonDesc[BtnIdx_Pedal].reportCode3;
+
 // button combo to send an escape keypress
 uint32_t EscapeKeyBtnMask = BtnMask_Reload | BtnMask_Start;
 
@@ -3071,25 +3078,79 @@ void SerialProcessing()
         case 'M':
           serialInput = Serial.read();                               // Read the second bit.
           switch(serialInput) {
-              case '1':
+              // input mode
+              case '0':
                 Serial.read();
                 serialInput = Serial.read();
-                if(serialInput > '0') {
-                    if(serialMode) {
-                        offscreenButtonSerial = true;
-                    } else {
-                        // eh, might be useful for Linux Supermodel users.
-                        offscreenButton = true;
-                        Serial.println("Setting offscreen button mode on!");
-                    }
-                } else {
-                    if(serialMode) { offscreenButtonSerial = false; }
-                    else {
-                        offscreenButton = false;
-                        Serial.println("Setting offscreen button mode off!");
-                    }
+                switch(serialInput) {
+                    // "hybrid" - just use the default m&kb mode
+                    case '2':
+                    // mouse & kb
+                    case '0':
+                      buttons.analogOutput = false;
+                      break;
+                    // gamepad
+                    case '1':
+                      buttons.analogOutput = true;
+                      if(Serial.peek() == 'L' || Serial.peek() == 'R') {
+                          serialInput = Serial.read();
+                          Gamepad16.stickRight = serialInput - 'L';
+                      }
+                      break;
+                }
+                AbsMouse5.releaseAll();
+                Keyboard.releaseAll();
+                Gamepad16.releaseAll();
+                break;
+              // offscreen button mode
+              case '1':
+                Serial.read();                                         // nomf
+                serialInput = Serial.read();
+                switch(serialInput) {
+                    // cursor in bottom left - just use disabled
+                    case '1':
+                    // disabled
+                    case '0':
+                      if(serialMode) { offscreenButtonSerial = false; }
+                      else { offscreenButton = false; }
+                      break;
+                    // offscreen button
+                    case '2':
+                      if(serialMode) { offscreenButtonSerial = true; }
+                      // eh, might be useful for Linux Supermodel users.
+                      else { offscreenButton = true; }
+                      break;
                 }
                 break;
+              // pedal functionality
+              case '2':
+                Serial.read();                                         // nomf
+                serialInput = Serial.read();
+                switch(serialInput) {
+                    // separate button (default to original binds)
+                    case '0':
+                      LightgunButtons::ButtonDesc[BtnIdx_Pedal].reportType = pedalOrigButtonType1;
+                      LightgunButtons::ButtonDesc[BtnIdx_Pedal].reportCode = pedalOrigButtonCode1;
+                      LightgunButtons::ButtonDesc[BtnIdx_Pedal].reportType2 = pedalOrigButtonType2;
+                      LightgunButtons::ButtonDesc[BtnIdx_Pedal].reportCode2 = pedalOrigButtonCode2;
+                      break;
+                    // make reload button (mouse right)
+                    case '1':
+                      LightgunButtons::ButtonDesc[BtnIdx_Pedal].reportType = LightgunButtons::ReportType_Mouse;
+                      LightgunButtons::ButtonDesc[BtnIdx_Pedal].reportCode = MOUSE_RIGHT;
+                      LightgunButtons::ButtonDesc[BtnIdx_Pedal].reportType2 = LightgunButtons::ReportType_Mouse;
+                      LightgunButtons::ButtonDesc[BtnIdx_Pedal].reportCode2 = MOUSE_RIGHT;
+                      break;
+                    // make middle mouse button (for VCop3 EZ mode)
+                    case '2':
+                      LightgunButtons::ButtonDesc[BtnIdx_Pedal].reportType = LightgunButtons::ReportType_Mouse;
+                      LightgunButtons::ButtonDesc[BtnIdx_Pedal].reportCode = MOUSE_MIDDLE;
+                      LightgunButtons::ButtonDesc[BtnIdx_Pedal].reportType2 = LightgunButtons::ReportType_Mouse;
+                      LightgunButtons::ButtonDesc[BtnIdx_Pedal].reportCode2 = MOUSE_MIDDLE;
+                      break;
+                }
+                break;
+              // aspect ratio correction
               case '3':
                 Serial.read();                                         // nomf
                 serialARcorrection = Serial.read() - '0';
@@ -3098,7 +3159,38 @@ void SerialProcessing()
                     else { Serial.println("Setting 4:3 correction off!"); }
                 }
                 break;
+              #ifdef USES_TEMP
+              // temp sensor disabling (why?)
+              case '4':
+                Serial.read();                                         // nomf
+                serialInput = Serial.read();
+                // TODO: implement
+                break;
+              #endif // USES_TEMP
+              // autoreload (TODO: maybe?)
+              case '5':
+                Serial.read();                                         // nomf
+                serialInput = Serial.read();
+                // TODO: implement?
+                break;
+              // rumble only mode (isn't this redundant?)
+              case '6':
+                Serial.read();                                         // nomf
+                serialInput = Serial.read();
+                switch(serialInput) {
+                    // disable
+                    case '0':
+                      if(SamcoPreferences::pins.sSolenoid == -1 && SamcoPreferences::pins.oSolenoid >= 0) { SamcoPreferences::toggles.solenoidActive = true; }
+                      break;
+                    case '1':
+                      if(SamcoPreferences::pins.sRumble == -1 && SamcoPreferences::pins.oRumble >= 0) { SamcoPreferences::toggles.rumbleActive = true; }
+                      if(SamcoPreferences::pins.sSolenoid == -1 && SamcoPreferences::pins.oSolenoid >= 0) { SamcoPreferences::toggles.solenoidActive = false; }
+                      break;
+                }
+                OF_FFB.FFBShutdown();
+                break;
               #ifdef USES_SOLENOID
+              // solenoid automatic mode
               case '8':
                 Serial.read();                                         // Nomf the padding bit.
                 serialInput = Serial.read();                           // Read the next.
