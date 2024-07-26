@@ -14,7 +14,7 @@
  * @author [That One Seong](SeongsSeongs@gmail.com)
  * @date 2024
  */
-#define OPENFIRE_VERSION 5.0
+#define OPENFIRE_VERSION 5.1
 #define OPENFIRE_CODENAME "Heartful"
 
  // For custom builders, remember to check (COMPILING.md) for IDE instructions!
