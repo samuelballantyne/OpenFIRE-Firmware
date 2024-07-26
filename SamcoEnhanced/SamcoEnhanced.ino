@@ -3178,7 +3178,7 @@ void SerialProcessing()
                 serialInput = Serial.read();
                 // TODO: implement?
                 break;
-              // rumble only mode (isn't this redundant?)
+              // rumble only mode (enable Rumble FF)
               case '6':
                 Serial.read();                                         // nomf
                 serialInput = Serial.read();
@@ -3186,10 +3186,13 @@ void SerialProcessing()
                     // disable
                     case '0':
                       if(SamcoPreferences::pins.sSolenoid == -1 && SamcoPreferences::pins.oSolenoid >= 0) { SamcoPreferences::toggles.solenoidActive = true; }
+                      if(SamcoPreferences::pins.oRumble >= 0) { SamcoPreferences::toggles.rumbleFF = false; }
                       break;
+                    // enable
                     case '1':
                       if(SamcoPreferences::pins.sRumble == -1 && SamcoPreferences::pins.oRumble >= 0) { SamcoPreferences::toggles.rumbleActive = true; }
                       if(SamcoPreferences::pins.sSolenoid == -1 && SamcoPreferences::pins.oSolenoid >= 0) { SamcoPreferences::toggles.solenoidActive = false; }
+                      if(SamcoPreferences::pins.oRumble >= 0) { SamcoPreferences::toggles.rumbleFF = true; }
                       break;
                 }
                 OF_FFB.FFBShutdown();
