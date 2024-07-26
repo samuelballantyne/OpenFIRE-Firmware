@@ -3093,8 +3093,7 @@ void SerialProcessing()
                     case '1':
                       buttons.analogOutput = true;
                       if(Serial.peek() == 'L' || Serial.peek() == 'R') {
-                          serialInput = Serial.read();
-                          Gamepad16.stickRight = serialInput - 'L';
+                          Gamepad16.stickRight = !constrain(Serial.read() - 'L', 0, 1);
                       }
                       break;
                 }
