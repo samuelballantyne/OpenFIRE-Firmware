@@ -3114,10 +3114,13 @@ void SerialProcessing()
                 switch(serialInput) {
                     // cursor in bottom left - just use disabled
                     case '1':
+                    // "true offscreen shot" mode - just use disabled for now
+                    case '3':
                     // disabled
                     case '0':
                       if(serialMode) { offscreenButtonSerial = false; }
                       else { offscreenButton = false; }
+                      // reset bindings for low button users if offscreen button was enabled earlier.
                       if(SamcoPreferences::toggles.lowButtonMode) {
                           LightgunButtons::ButtonDesc[BtnIdx_A].reportType = LightgunButtons::ReportType_Mouse;
                           LightgunButtons::ButtonDesc[BtnIdx_A].reportCode = MOUSE_RIGHT;
@@ -3130,11 +3133,12 @@ void SerialProcessing()
                       if(serialMode) { offscreenButtonSerial = true; }
                       // eh, might be useful for Linux Supermodel users.
                       else { offscreenButton = true; }
+                      // remap bindings for low button users to make e.g. VCop 3 playable with 1 btn + pedal
                       if(SamcoPreferences::toggles.lowButtonMode) {
                           LightgunButtons::ButtonDesc[BtnIdx_A].reportType = LightgunButtons::ReportType_Mouse;
-                          LightgunButtons::ButtonDesc[BtnIdx_A].reportCode = MOUSE_MIDDLE;
+                          LightgunButtons::ButtonDesc[BtnIdx_A].reportCode = MOUSE_BUTTON4;
                           LightgunButtons::ButtonDesc[BtnIdx_B].reportType = LightgunButtons::ReportType_Mouse;
-                          LightgunButtons::ButtonDesc[BtnIdx_B].reportCode = MOUSE_RIGHT;
+                          LightgunButtons::ButtonDesc[BtnIdx_B].reportCode = MOUSE_BUTTON5;
                       }
                       break;
                 }
