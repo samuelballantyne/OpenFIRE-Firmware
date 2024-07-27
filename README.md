@@ -1,4 +1,4 @@
-### Like our work? [Remember to support the maintainers!](https://github.com/TeamOpenFIRE/.github/blob/main/profile/README.md)
+### Like our work? [Remember to support the developers!](https://github.com/TeamOpenFIRE/.github/blob/main/profile/README.md)
 
 ![BannerDark](of_bannerLoD.png#gh-dark-mode-only)![BannerLight](of_bannerDoL.png#gh-light-mode-only)
 # OpenFIRE - The Open *Four Infa-Red Emitter* Light Gun System
