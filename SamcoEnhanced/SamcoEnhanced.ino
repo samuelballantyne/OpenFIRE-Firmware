@@ -3356,7 +3356,7 @@ void SerialProcessing()
               default:
                 Serial.println("SERIALREAD: Internal setting command detected, but no valid option found!");
                 Serial.println("Internally recognized commands are:");
-                Serial.println("A(nalog)[L/R] / I(nterval Autofire)2/3/4 / R(emap)1/2/3/4 / P(ause)");
+                Serial.println("I(nterval Autofire)2/3/4 / R(emap)1/2/3/4 / P(ause)");
                 break;
           }
           // End of 'X'
@@ -4871,20 +4871,21 @@ void UpdateBindings(bool offscreenEnable)
 
     // Updates button functions for low-button mode
     if(offscreenEnable) {
-        LightgunButtons::ButtonDesc[1].reportType2 = LightgunButtons::ReportType_Keyboard;
-        LightgunButtons::ButtonDesc[1].reportCode2 = playerStartBtn;
-        LightgunButtons::ButtonDesc[2].reportType2 = LightgunButtons::ReportType_Keyboard;
-        LightgunButtons::ButtonDesc[2].reportCode2 = playerSelectBtn;
-        LightgunButtons::ButtonDesc[3].reportCode = playerStartBtn;
-        LightgunButtons::ButtonDesc[4].reportCode = playerSelectBtn;
+        LightgunButtons::ButtonDesc[BtnIdx_A].reportType2 = LightgunButtons::ReportType_Keyboard;
+        LightgunButtons::ButtonDesc[BtnIdx_A].reportCode2 = playerStartBtn;
+        LightgunButtons::ButtonDesc[BtnIdx_B].reportType2 = LightgunButtons::ReportType_Keyboard;
+        LightgunButtons::ButtonDesc[BtnIdx_B].reportCode2 = playerSelectBtn;
     } else {
-        LightgunButtons::ButtonDesc[1].reportType2 = LightgunButtons::ReportType_Mouse;
-        LightgunButtons::ButtonDesc[1].reportCode2 = MOUSE_RIGHT;
-        LightgunButtons::ButtonDesc[2].reportType2 = LightgunButtons::ReportType_Mouse;
-        LightgunButtons::ButtonDesc[2].reportCode2 = MOUSE_MIDDLE;
-        LightgunButtons::ButtonDesc[3].reportCode = playerStartBtn;
-        LightgunButtons::ButtonDesc[4].reportCode = playerSelectBtn;
+        LightgunButtons::ButtonDesc[BtnIdx_A].reportType2 = LightgunButtons::ReportType_Mouse;
+        LightgunButtons::ButtonDesc[BtnIdx_A].reportCode2 = MOUSE_RIGHT;
+        LightgunButtons::ButtonDesc[BtnIdx_B].reportType2 = LightgunButtons::ReportType_Mouse;
+        LightgunButtons::ButtonDesc[BtnIdx_B].reportCode2 = MOUSE_MIDDLE;
     }
+    // update start/select button keyboard bindings
+    LightgunButtons::ButtonDesc[BtnIdx_Start].reportCode = playerStartBtn;
+    LightgunButtons::ButtonDesc[BtnIdx_Start].reportCode2 = playerStartBtn;
+    LightgunButtons::ButtonDesc[BtnIdx_Select].reportCode = playerSelectBtn;
+    LightgunButtons::ButtonDesc[BtnIdx_Select].reportCode2 = playerSelectBtn;
 }
 
 #ifdef DEBUG_SERIAL
