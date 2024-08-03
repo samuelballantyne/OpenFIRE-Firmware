@@ -4489,6 +4489,12 @@ bool SelectCalPrefs(unsigned int profile)
 // ONLY to be used from setup()
 void LedInit()
 {
+    #ifdef ARDUINO_RASPBERRY_PI_PICO
+        // this only needs to be set for rpipico, as Pico W's LED is tied to the WiFi chip,
+        // and thus doesn't take pin direction statements.
+        pinMode(PIN_LED, OUTPUT);
+    #endif // ARDUINO_RASPBERRY_PI_PICO
+
     // init DotStar and/or NeoPixel to red during setup()
     // For the onboard NEOPIXEL, if any; it needs to be enabled.
     #ifdef NEOPIXEL_ENABLEPIN
@@ -4523,6 +4529,7 @@ void SetLedPackedColor(uint32_t color)
     neopixel.setPixelColor(0, color);
     neopixel.show();
 #endif // NEOPIXEL_PIN
+
 #ifdef CUSTOM_NEOPIXEL
     if(SamcoPreferences::pins.oPixel >= 0) {
         if(SamcoPreferences::settings.customLEDstatic < SamcoPreferences::settings.customLEDcount) {
@@ -4531,11 +4538,20 @@ void SetLedPackedColor(uint32_t color)
         }
     }
 #endif // CUSTOM_NEOPIXEL
+
+    // separate r/g/b values for the following three pin output devices.
+    byte r = highByte(color >> 8);
+    byte g = highByte(color);
+    byte b = lowByte(color);
+
+#if defined(ARDUINO_RASPBERRY_PI_PICO) || defined(ARDUINO_RASPBERRY_PI_PICO_W)
+    // since Pico LED is a simple on/off, round down and average the total color.
+    if(r < 100 && g < 100 && b < 100) { digitalWrite(PIN_LED, LOW); }
+    else { digitalWrite(PIN_LED, HIGH); }
+#endif // ARDUINO_RASPBERRY_PI_PICO/W
+
 #ifdef FOURPIN_LED
     if(ledIsValid) {
-        byte r = highByte(color >> 8);
-        byte g = highByte(color);
-        byte b = lowByte(color);
         if(SamcoPreferences::toggles.commonAnode) {
             r = ~r;
             g = ~g;
@@ -4546,13 +4562,14 @@ void SetLedPackedColor(uint32_t color)
         analogWrite(SamcoPreferences::pins.oLedB, b);
     }
 #endif // FOURPIN_LED
+
 #ifdef ARDUINO_NANO_RP2040_CONNECT
-    byte r = highByte(color >> 8);
-    byte g = highByte(color);
-    byte b = lowByte(color);
-    r = ~r;
-    g = ~g;
-    b = ~b;
+    // in case the color bytes were already flipped before, as Arduino Nano also uses power sink pins i.e. common anode
+    if(ledIsValid && !SamcoPreferences::toggles.commonAnode) {
+        r = ~r;
+        g = ~g;
+        b = ~b;
+    }
     analogWrite(LEDR, r);
     analogWrite(LEDG, g);
     analogWrite(LEDB, b);
@@ -4575,6 +4592,7 @@ void LedUpdate(byte r, byte g, byte b)
         neopixel.setPixelColor(0, r, g, b);
         neopixel.show();
     #endif // NEOPIXEL_PIN
+
     #ifdef CUSTOM_NEOPIXEL
         if(SamcoPreferences::pins.oPixel >= 0) {
             if(SamcoPreferences::settings.customLEDstatic < SamcoPreferences::settings.customLEDcount) {
@@ -4583,6 +4601,12 @@ void LedUpdate(byte r, byte g, byte b)
             }
         }
     #endif // CUSTOM_NEOPIXEL
+
+    #if defined(ARDUINO_RASPBERRY_PI_PICO) || defined(ARDUINO_RASPBERRY_PI_PICO_W)
+        if(r < 100 && g < 100 && b < 100) { digitalWrite(PIN_LED, LOW); }
+        else { digitalWrite(PIN_LED, HIGH); }
+    #endif // ARDUINO_RASPBERRY_PI_PICO/W
+
     #ifdef FOURPIN_LED
         if(ledIsValid) {
             if(SamcoPreferences::toggles.commonAnode) {
@@ -4595,6 +4619,7 @@ void LedUpdate(byte r, byte g, byte b)
             analogWrite(SamcoPreferences::pins.oLedB, b);
         }
     #endif // FOURPIN_LED
+
     #ifdef ARDUINO_NANO_RP2040_CONNECT
         #ifdef FOURPIN_LED
         // Nano's builtin is a common anode, so we use that logic by default if it's enabled on the external 4-pin;
