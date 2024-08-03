@@ -1551,11 +1551,20 @@ void ExecGunModeDocked()
     unsigned long aStickChecked = millis();
     uint8_t aStickDirPrev;
 
+#ifdef GIT_HASH
+    Serial.printf("OpenFIRE,%.1f-%s,%s,%s,%i\r\n",
+    OPENFIRE_VERSION,
+    GIT_HASH,
+    OPENFIRE_CODENAME,
+    OPENFIRE_BOARD,
+    selectedProfile);
+#else
     Serial.printf("OpenFIRE,%.1f,%s,%s,%i\r\n",
     OPENFIRE_VERSION,
     OPENFIRE_CODENAME,
     OPENFIRE_BOARD,
     selectedProfile);
+#endif // GIT_HASH
     for(;;) {
         buttons.Poll(1);
 
