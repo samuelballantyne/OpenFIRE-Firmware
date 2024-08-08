@@ -52,9 +52,11 @@ public:
     /// @brief Macro to shut down all force feedback
     void FFBShutdown();
 
+    // For rumble: for checking rumble state in main loop.
+    bool rumbleHappening = false;              // To keep track on if this is a rumble command or not.
+
     // For autofire:
     bool triggerHeld = false;                  // Trigger SHOULDN'T be being pulled by default, right?
-
     bool burstFireActive = false;
 
     // Current temperature as read from TMP36, in (approximate) Celsius
@@ -65,7 +67,6 @@ private:
     bool solenoidFirstShot = false;            // default to off, but set this on the first time we shoot.
 
     // For rumble:
-    bool rumbleHappening = false;              // To keep track on if this is a rumble command or not.
     bool rumbleHappened = false;               // If we're holding, this marks we sent a rumble command already; is cleared when trigger is released
     
     unsigned long previousMillisSol = 0;       // Timestamp of last time since unique solenoid state change
