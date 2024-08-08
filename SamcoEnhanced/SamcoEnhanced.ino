@@ -363,8 +363,6 @@ bool buttonPressed = false;                      // Sanity check.
     #endif // USES_RUMBLE
     #ifdef USES_SOLENOID
     unsigned long serialSolPulsesLastUpdate = 0;     // The timestamp of the last serial-invoked pulse solenoid event we updated.
-    unsigned int serialSolPulsesLength = 80;         // How long to wait between each solenoid event in a pulse, in ms.
-    bool serialSolPulseOn = false;                   // Because we can't just read it normally, is the solenoid getting PWM high output now?
     int serialSolPulses = 0;                         // How many solenoid pulses are we being told to do?
     int serialSolPulsesLast = 0;                     // What solenoid pulse we've processed last.
     #endif // USES_SOLENOID
@@ -3341,7 +3339,6 @@ void SerialProcessing()
                   #endif // USES_RUMBLE
                   #ifdef USES_SOLENOID
                       digitalWrite(SamcoPreferences::pins.oSolenoid, LOW);
-                      serialSolPulseOn = false;
                       serialSolPulses = 0;
                       serialSolPulsesLast = 0;
                   #endif // USES_SOLENOID
