@@ -3655,8 +3655,7 @@ void SerialHandling()
                   serialRumbPulseStage = 0;                              // Set that we're at stage 0.
                   serialRumbPulsesLast = 1;                              // Set that we've started a pulse rumble command, and start counting how many pulses we're doing.
               } else if(serialRumbPulsesLast <= serialRumbPulses) { // Have we exceeded the set amount of pulses the rumble command called for?
-                  unsigned long currentMillis = millis();                // Sync the timer.
-                  if(currentMillis - serialRumbPulsesLastUpdate > serialRumbPulsesLength) { // have we waited enough time between pulse stages?
+                  if(millis() - serialRumbPulsesLastUpdate > serialRumbPulsesLength) { // have we waited enough time between pulse stages?
                       switch(serialRumbPulseStage) {                     // If so, let's start processing.
                           case 0:                                        // Basically, each case
                               analogWrite(SamcoPreferences::pins.oRumble, 255);               // bumps up the intensity, (lowest to rising)
@@ -3704,8 +3703,7 @@ void SerialHandling()
                 serialLEDG = 0;
                 serialLEDB = 0;
             } else if(serialLEDPulsesLast <= serialLEDPulses) { // Else, have we not reached the number of pulses requested?
-                unsigned long currentMillis = millis();            // Calibrate the timer.
-                if(currentMillis - serialLEDPulsesLastUpdate > serialLEDPulsesLength) { // have we waited enough time between pulse stages?
+                if(millis() - serialLEDPulsesLastUpdate > serialLEDPulsesLength) { // have we waited enough time between pulse stages?
                     if(serialLEDPulseRising) {                // If we're in the rising stage,
                         switch(serialLEDPulseColorMap) {           // Check the color map
                             case 0b00000001:                       // Basically for R, G, or B,
