@@ -3055,26 +3055,35 @@ void SerialProcessingDocked()
               // Testing feedback
               case 't':
                 serialInput = Serial.read();
-                if(serialInput == 's') {
-                  digitalWrite(SamcoPreferences::pins.oSolenoid, HIGH);
-                  delay(SamcoPreferences::settings.solenoidNormalInterval);
-                  digitalWrite(SamcoPreferences::pins.oSolenoid, LOW);
-                } else if(serialInput == 'r') {
-                  analogWrite(SamcoPreferences::pins.oRumble, SamcoPreferences::settings.rumbleIntensity);
-                  delay(SamcoPreferences::settings.rumbleInterval);
-                  digitalWrite(SamcoPreferences::pins.oRumble, LOW);
-                } else if(serialInput == 'R') {
-                  digitalWrite(SamcoPreferences::pins.oLedR, HIGH);
-                  digitalWrite(SamcoPreferences::pins.oLedG, LOW);
-                  digitalWrite(SamcoPreferences::pins.oLedB, LOW);
-                } else if(serialInput == 'G') {
-                  digitalWrite(SamcoPreferences::pins.oLedR, LOW);
-                  digitalWrite(SamcoPreferences::pins.oLedG, HIGH);
-                  digitalWrite(SamcoPreferences::pins.oLedB, LOW);
-                } else if(serialInput == 'B') {
-                  digitalWrite(SamcoPreferences::pins.oLedR, LOW);
-                  digitalWrite(SamcoPreferences::pins.oLedG, LOW);
-                  digitalWrite(SamcoPreferences::pins.oLedB, HIGH);
+                switch(serialInput) {
+                    #ifdef USES_SOLENOID
+                    case 's':
+                      digitalWrite(SamcoPreferences::pins.oSolenoid, HIGH);
+                      delay(SamcoPreferences::settings.solenoidNormalInterval);
+                      digitalWrite(SamcoPreferences::pins.oSolenoid, LOW);
+                      break;
+                    #endif // USES_SOLENOID
+                    #ifdef USES_RUMBLE
+                    case 'r':
+                      analogWrite(SamcoPreferences::pins.oRumble, SamcoPreferences::settings.rumbleIntensity);
+                      delay(SamcoPreferences::settings.rumbleInterval);
+                      digitalWrite(SamcoPreferences::pins.oRumble, LOW);
+                      break;
+                    #endif // USES_RUMBLE
+                    #ifdef LED_ENABLE
+                    // meant to be for 4pins, but will update all LED devices anyways.
+                    case 'R':
+                      LedUpdate(255, 0, 0);
+                      break;
+                    case 'G':
+                      LedUpdate(0, 255, 0);
+                      break;
+                    case 'B':
+                      LedUpdate(0, 0, 255);
+                      break;
+                    #endif // LED_ENABLE
+                    default:
+                      break;
                 }
                 break;
               case 'x':
