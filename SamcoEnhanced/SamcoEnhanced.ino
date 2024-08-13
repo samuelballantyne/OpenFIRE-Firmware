@@ -4078,7 +4078,7 @@ void PrintResults()
         return;
     }
 
-    if(!Serial.dtr()) {
+    if(!Serial) {
         stateFlags |= StateFlagsDtrReset;
         return;
     }
@@ -4113,7 +4113,7 @@ void PrintResults()
 // Subroutine that prints all stored preferences information in a table
 void PrintPreferences()
 {
-    if(!(stateFlags & StateFlag_PrintPreferences) || !Serial.dtr()) {
+    if(!(stateFlags & StateFlag_PrintPreferences) || !Serial) {
         return;
     }
 
@@ -4954,7 +4954,7 @@ void UpdateBindings(bool offscreenEnable)
 void PrintDebugSerial()
 {
     // only print every second
-    if(millis() - serialDbMs >= 1000 && Serial.dtr()) {
+    if(millis() - serialDbMs >= 1000 && Serial) {
         Serial.print("mode ");
         Serial.print(gunMode);
         Serial.print(", IR pos fps ");
