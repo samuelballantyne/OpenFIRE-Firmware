@@ -40,6 +40,7 @@ Grab the latest *.UF2* binary for your respective board [from the releases page]
 ## Known Issues:
 - With Pico W & Bluetooth enabled, TinyUSB/Serial fails to initialize properly when connected via USB, so the firmware is deadlocked either sending serial or USB report data.
 - Updating NeoPixels settings from the OF App might cause some Pixels to be locked or shut off after saving - this is only temporary and will resolve itself after unplugging the board.
+- Either force feedback test (when invoked from the app) will cause the board to stop responding if there is no working camera present.
 - There may be rare instances of SSD1306 displays shifting the display down a number of rows when the screen updates, which persist until the board is unplugged. The exact cause is still being investigated.
 - Some rare instances where a serial exit signal is received while sending an escape key signal in the Simple Pause Menu with (non-static) Pixels in use might cause the gun to freeze. The exact cause is being investiaged.
 
