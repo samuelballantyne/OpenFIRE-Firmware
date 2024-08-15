@@ -49,7 +49,7 @@
     // Apparently an LED is included, but has to be communicated with through the WiFi chip (or else it throws compiler errors)
     // That said, LEDs are attached to Pins 25(G), 26(B), 27(R).
     #include <WiFiNINA.h>
-#endif
+#endif // ARDUINO_NANO
 #ifdef SAMCO_FLASH_ENABLE
     #include <Adafruit_SPIFlashBase.h>
 #elif SAMCO_EEPROM_ENABLE
@@ -4549,8 +4549,9 @@ void SetLedPackedColor(uint32_t color)
     byte g = highByte(color);
     byte b = lowByte(color);
 
-#if defined(ARDUINO_RASPBERRY_PI_PICO) || defined(ARDUINO_RASPBERRY_PI_PICO_W)
+#ifdef ARDUINO_RASPBERRY_PI_PICO
     // since Pico LED is a simple on/off, round down and average the total color.
+    // TODO: Pico W will lock up when addressing its LED (WiFi module problems?)
     if(r < 100 && g < 100 && b < 100) { digitalWrite(PIN_LED, LOW); }
     else { digitalWrite(PIN_LED, HIGH); }
 #endif // ARDUINO_RASPBERRY_PI_PICO/W
@@ -4607,10 +4608,11 @@ void LedUpdate(byte r, byte g, byte b)
         }
     #endif // CUSTOM_NEOPIXEL
 
-    #if defined(ARDUINO_RASPBERRY_PI_PICO) || defined(ARDUINO_RASPBERRY_PI_PICO_W)
+    #ifdef ARDUINO_RASPBERRY_PI_PICO
+    // TODO: Pico W will lock up when addressing its LED (WiFi module problems?)
         if(r < 100 && g < 100 && b < 100) { digitalWrite(PIN_LED, LOW); }
         else { digitalWrite(PIN_LED, HIGH); }
-    #endif // ARDUINO_RASPBERRY_PI_PICO/W
+    #endif // ARDUINO_RASPBERRY_PI_PICO
 
     #ifdef FOURPIN_LED
         if(ledIsValid) {
