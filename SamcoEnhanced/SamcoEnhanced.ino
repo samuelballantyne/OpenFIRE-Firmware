@@ -1465,27 +1465,11 @@ void ExecRunMode()
                 if(t - pauseHoldStartstamp > SamcoPreferences::settings.pauseHoldLength) {
                     // MAKE SURE EVERYTHING IS DISENGAGED:
                     OF_FFB.FFBShutdown();
-		    /*
-		    #ifdef USES_SOLENOID
-                        digitalWrite(SamcoPreferences::pins.oSolenoid, LOW);
-                        solenoidFirstShot = false;
-                    #endif // USES_SOLENOID
-                    #ifdef USES_RUMBLE
-                        digitalWrite(SamcoPreferences::pins.oRumble, LOW);
-                        rumbleHappening = false;
-                        rumbleHappened = false;
-                    #endif // USES_RUMBLE
-                    */
-		    Keyboard.releaseAll();
+		                Keyboard.releaseAll();
                     AbsMouse5.releaseAll();
                     offscreenBShot = false;
                     buttonPressed = false;
-                    /*
-		    triggerHeld = false;
-                    burstFiring = false;
-                    burstFireCount = 0;
-                    */
-	    	    pauseModeSelection = PauseMode_Calibrate;
+	    	            pauseModeSelection = PauseMode_Calibrate;
                     SetMode(GunMode_Pause);
                     buttons.ReportDisable();
                     return;
@@ -1495,32 +1479,16 @@ void ExecRunMode()
             if(buttons.pressedReleased == EnterPauseModeBtnMask || buttons.pressedReleased == BtnMask_Home) {
                 // MAKE SURE EVERYTHING IS DISENGAGED:
                 OF_FFB.FFBShutdown();
-		/*
-		#ifdef USES_SOLENOID
-                    digitalWrite(SamcoPreferences::pins.oSolenoid, LOW);
-                    solenoidFirstShot = false;
-                #endif // USES_SOLENOID
-                #ifdef USES_RUMBLE
-                    digitalWrite(SamcoPreferences::pins.oRumble, LOW);
-                    rumbleHappening = false;
-                    rumbleHappened = false;
-                #endif // USES_RUMBLE
-                */
-		Keyboard.releaseAll();
+		            Keyboard.releaseAll();
                 AbsMouse5.releaseAll();
                 offscreenBShot = false;
                 buttonPressed = false;
-                /*
-		triggerHeld = false;
-                burstFiring = false;
-                burstFireCount = 0;
-                */
-		SetMode(GunMode_Pause);
+		            SetMode(GunMode_Pause);
                 buttons.ReportDisable();
                 return;
             }
         }
-        #else                                                       // if we're using dual cores,
+        #else  // if we're using dual cores,
         if(gunMode != GunMode_Run) {                                // We just check if the gunmode has been changed by the other thread.
             Keyboard.releaseAll();
             AbsMouse5.releaseAll();
