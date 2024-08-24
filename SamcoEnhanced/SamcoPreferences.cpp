@@ -19,6 +19,13 @@
 #endif // SAMCO_EEPROM_ENABLE
 
 // 4 byte header ID
+/*
+ * The latter two characters of the header correlate to the Save Table Version (see SamcoPreferences.h).
+ * If the save table is ever changed (values added/removed or changed order/size),
+ * the version number MUST be incremented in tandem so that the firmware will
+ * appropriately update previously saved tables (TODO) or reset current NVRAM.
+ * Failure to do this might cause save corruption or other undefined behavior.
+ */
 const SamcoPreferences::HeaderId_t SamcoPreferences::HeaderId = {'O', 'F', '0', '1'};
 
 #ifdef SAMCO_EEPROM_ENABLE
