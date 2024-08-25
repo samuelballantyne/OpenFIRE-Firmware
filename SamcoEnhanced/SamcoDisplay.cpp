@@ -166,6 +166,8 @@ void ExtDisplay::ScreenModeChange(int8_t screenMode, bool isAnalog)
               PrintLife(currentLife);
             } else if(serialDisplayType == ScreenSerial_Ammo) {
               PrintAmmo(currentAmmo);
+            } else {
+              display->drawBitmap(0, 17, mamehookIco, MAMEHOOK_WIDTH, MAMEHOOK_HEIGHT, WHITE);
             }
             break;
           case Screen_Mamehook_Dual:

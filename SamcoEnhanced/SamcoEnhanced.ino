@@ -3085,6 +3085,10 @@ void SerialProcessing()
                   // Set the LEDs to a mid-intense white.
                   LedUpdate(127, 127, 127);
               #endif // LED_ENABLE
+              #ifdef USES_DISPLAY
+                  // init basic display to show mamehook icon
+                  if(gunMode == GunMode_Run) { OLED.ScreenModeChange(ExtDisplay::Screen_Mamehook_Single, buttons.analogOutput); }
+              #endif // USES_DISPLAY
           }
           break;
         // Modesetting Signal
@@ -3294,8 +3298,8 @@ void SerialProcessing()
                   serialQueue = 0b00000000;
                   serialARcorrection = false;
                   #ifdef USES_DISPLAY
-                  OLED.serialDisplayType = ExtDisplay::ScreenSerial_None;
-                  if(gunMode == GunMode_Run) { OLED.ScreenModeChange(ExtDisplay::Screen_Normal, buttons.analogOutput); }
+                      OLED.serialDisplayType = ExtDisplay::ScreenSerial_None;
+                      if(gunMode == GunMode_Run) { OLED.ScreenModeChange(ExtDisplay::Screen_Normal, buttons.analogOutput); }
                   #endif // USES_DISPLAY
                   #ifdef LED_ENABLE
                       serialLEDPulseColorMap = 0b00000000;               // Clear any stale serial LED pulses
@@ -3816,7 +3820,7 @@ void SetMode(GunMode_e newMode)
         #ifdef USES_DISPLAY
           if(OLED.serialDisplayType == ExtDisplay::ScreenSerial_Both) {
             OLED.ScreenModeChange(ExtDisplay::Screen_Mamehook_Dual);
-          } else if(OLED.serialDisplayType > ExtDisplay::ScreenSerial_None) {
+          } else if(serialMode) {
             OLED.ScreenModeChange(ExtDisplay::Screen_Mamehook_Single, buttons.analogOutput);
           } else {
             OLED.ScreenModeChange(ExtDisplay::Screen_Normal, buttons.analogOutput);
