@@ -1796,7 +1796,6 @@ void ExecCalMode()
             Serial.printf("CalStage: %d\r\n", calStage);
             // make sure our messages go through, or else the HID reports eats UART.
             Serial.flush();
-            CaliMousePosMove(calStage);
             switch(calStage) {
                 case Cali_Init:
                   break;
@@ -1821,29 +1820,21 @@ void ExecCalMode()
                   // Update Cam centre in perspective library
                   OpenFIREper.source(profileData[selectedProfile].adjX, profileData[selectedProfile].adjY);                                                          
                   OpenFIREper.deinit(0);
-                  // Move to top calibration point
-                  AbsMouse5.move(32768/2, 0);
                   break;
 
                 case Cali_Bottom:
                   // Set Offset buffer
                   topOffset = mouseY;
-                  // Move to bottom calibration point
-                  AbsMouse5.move(32768/2, 32766);
                   break;
 
                 case Cali_Left:
                   // Set Offset buffer
                   bottomOffset = (res_y - mouseY);
-                  // Move to left calibration point
-                  AbsMouse5.move(0, 32768/2);
                   break;
 
                 case Cali_Right:
                   // Set Offset buffer
                   leftOffset = mouseX;
-                  // Move to right calibration point
-                  AbsMouse5.move(32766, 32768/2);
                   break;
 
                 case Cali_Center:
@@ -1855,8 +1846,6 @@ void ExecCalMode()
                   profileData[selectedProfile].bottomOffset = bottomOffset;
                   profileData[selectedProfile].leftOffset = leftOffset;
                   profileData[selectedProfile].rightOffset = rightOffset;
-                  // Move back to center calibration point
-                  AbsMouse5.move(32768/2, 32768/2);
                   break;
 
                 case Cali_Verify:
@@ -1887,7 +1876,7 @@ void ExecCalMode()
                           break;
                       // Press A/B to restart cali for current profile
                       } else if(buttons.pressedReleased & ExitPauseModeHoldBtnMask) {
-                          calStage = 0;
+                          calStage = Cali_Init;
                           Serial.printf("CalStage: %d\r\n", Cali_Init);
                           Serial.flush();
                           // (re)set current values to factory defaults
@@ -1922,6 +1911,7 @@ void ExecCalMode()
                   }
                   break;
             }
+            CaliMousePosMove(calStage);
         }
     }
     // Break Cali
