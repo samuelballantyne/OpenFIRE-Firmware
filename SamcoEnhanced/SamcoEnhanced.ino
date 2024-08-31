@@ -1846,6 +1846,8 @@ void ExecCalMode()
                   profileData[selectedProfile].bottomOffset = bottomOffset;
                   profileData[selectedProfile].leftOffset = leftOffset;
                   profileData[selectedProfile].rightOffset = rightOffset;
+                  // Move back to center calibration point
+                  AbsMouse5.move(32768/2, 32768/2);
                   break;
 
                 case Cali_Verify:
@@ -1876,7 +1878,7 @@ void ExecCalMode()
                           break;
                       // Press A/B to restart cali for current profile
                       } else if(buttons.pressedReleased & ExitPauseModeHoldBtnMask) {
-                          calStage = Cali_Init;
+                          calStage = 0;
                           Serial.printf("CalStage: %d\r\n", Cali_Init);
                           Serial.flush();
                           // (re)set current values to factory defaults
@@ -3622,24 +3624,24 @@ void SerialHandling()
               //bitClear(serialQueue, 3);
           } else if(bitRead(serialQueue, SerialQueue_RumbPulse)) {  // or if the rumble pulse bit is set,
               if(!serialRumbPulsesLast) {                           // is the pulses last bit set to off?
-                  analogWrite(SamcoPreferences::pins.oRumble, 75);       // we're starting fresh, so use the stage 0 value.
+                  analogWrite(SamcoPreferences::pins.oRumble, SamcoPreferences::settings.rumbleIntensity / 3); // we're starting fresh, so use the stage 0 value.
                   serialRumbPulseStage = 0;                              // Set that we're at stage 0.
                   serialRumbPulsesLast = 1;                              // Set that we've started a pulse rumble command, and start counting how many pulses we're doing.
               } else if(serialRumbPulsesLast <= serialRumbPulses) { // Have we exceeded the set amount of pulses the rumble command called for?
                   if(millis() - serialRumbPulsesLastUpdate > serialRumbPulsesLength) { // have we waited enough time between pulse stages?
                       switch(serialRumbPulseStage) {                     // If so, let's start processing.
                           case 0:                                        // Basically, each case
-                              analogWrite(SamcoPreferences::pins.oRumble, 255);               // bumps up the intensity, (lowest to rising)
+                              analogWrite(SamcoPreferences::pins.oRumble, SamcoPreferences::settings.rumbleIntensity); // bumps up the intensity, (lowest to rising)
                               serialRumbPulseStage++;                    // and increments the stage of the pulse.
                               serialRumbPulsesLastUpdate = millis();     // and timestamps when we've had updated this last.
                               break;                                     // Then quits the switch.
                           case 1:
-                              analogWrite(SamcoPreferences::pins.oRumble, 120);  // (rising to peak)
+                              analogWrite(SamcoPreferences::pins.oRumble, SamcoPreferences::settings.rumbleIntensity / 2); // (rising to peak)
                               serialRumbPulseStage++;
                               serialRumbPulsesLastUpdate = millis();
                               break;
                           case 2:
-                              analogWrite(SamcoPreferences::pins.oRumble, 75);  // (peak to falling,)
+                              analogWrite(SamcoPreferences::pins.oRumble, SamcoPreferences::settings.rumbleIntensity / 3); // (peak to falling,)
                               serialRumbPulseStage = 0;
                               serialRumbPulsesLast++;
                               serialRumbPulsesLastUpdate = millis();
