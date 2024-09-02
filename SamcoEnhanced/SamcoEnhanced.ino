@@ -3442,6 +3442,8 @@ void SerialProcessing()
                         }
                     }
                     serialLEDR = atoi(serialInputS);                   // And set that as the strength of the red value that's requested!
+                    bitClear(serialQueue, SerialQueue_LEDPulse);       // Overwrite pulse bits.
+                    serialLEDPulseColorMap = 0;
                 } else if(serialInput == '2' &&  // else, is it a pulse command?
                 !bitRead(serialQueue, SerialQueue_LEDPulse)) {  // (and we haven't already sent a pulse command?)
                     bitSet(serialQueue, SerialQueue_LEDPulse);         // Set the pulse bit!
@@ -3457,8 +3459,9 @@ void SerialProcessing()
                     serialLEDPulses = atoi(serialInputS);              // and set that as the amount of pulses requested
                     serialLEDPulsesLast = 0;                           // reset the pulses done count.
                 } else if(serialInput == '0') {  // else, it's an off command.
-                    bitClear(serialQueue, SerialQueue_Red);            // Set the R bit off.
-                    serialLEDR = 0;                                    // Clear the R value.
+                    serialQueue &= 0b01101111;                         // Set the R and Pulse commands off.
+                    serialLEDR = 0;                                    // Clear the R value. 
+                    serialLEDPulseColorMap = 0;
                 }
                 break;
               // LED Green bits
@@ -3477,6 +3480,8 @@ void SerialProcessing()
                         }
                     }
                     serialLEDG = atoi(serialInputS);                   // And set that here!
+                    bitClear(serialQueue, SerialQueue_LEDPulse);       // Overwrite pulse bits.
+                    serialLEDPulseColorMap = 0;
                 } else if(serialInput == '2' &&  // else, is it a pulse command?
                 !bitRead(serialQueue, SerialQueue_LEDPulse)) {  // (and we haven't already sent a pulse command?)
                     bitSet(serialQueue, SerialQueue_LEDPulse);         // Set the pulse bit!
@@ -3492,8 +3497,9 @@ void SerialProcessing()
                     serialLEDPulses = atoi(serialInputS);              // and set that as the amount of pulses requested
                     serialLEDPulsesLast = 0;                           // reset the pulses done count.
                 } else if(serialInput == '0') {  // else, it's an off command.
-                    bitClear(serialQueue, SerialQueue_Green);          // Set the G bit off.
+                    serialQueue &= 0b01011111;                         // Set the G and Pulse commands off.
                     serialLEDG = 0;                                    // Clear the G value.
+                    serialLEDPulseColorMap = 0;
                 }
                 break;
               // LED Blue bits
@@ -3512,6 +3518,8 @@ void SerialProcessing()
                         }
                     }
                     serialLEDB = atoi(serialInputS);                   // And set that as the strength requested here!
+                    bitClear(serialQueue, SerialQueue_LEDPulse);       // Overwrite pulse bits.
+                    serialLEDPulseColorMap = 0;
                 } else if(serialInput == '2' &&  // else, is it a pulse command?
                 !bitRead(serialQueue, SerialQueue_LEDPulse)) {  // (and we haven't already sent a pulse command?)
                     bitSet(serialQueue, SerialQueue_LEDPulse);         // Set the pulse bit!
@@ -3527,8 +3535,9 @@ void SerialProcessing()
                     serialLEDPulses = atoi(serialInputS);              // and set that as the amount of pulses requested
                     serialLEDPulsesLast = 0;                           // reset the pulses done count.
                 } else if(serialInput == '0') {  // else, it's an off command.
-                    bitClear(serialQueue, SerialQueue_Blue);           // Set the B bit off.
+                    serialQueue &= 0b00111111;                         // Set the B and Pulse commands off.
                     serialLEDB = 0;                                    // Clear the B value.
+                    serialLEDPulseColorMap = 0;
                 }
                 break;
               #endif // LED_ENABLE
@@ -3661,14 +3670,9 @@ void SerialHandling()
   #endif // USES_RUMBLE
   #ifdef LED_ENABLE
     if(serialLEDChange) {                                     // Has the LED command state changed?
-        if(bitRead(serialQueue, SerialQueue_Red) ||           // Are either the R,
-        bitRead(serialQueue, SerialQueue_Green) ||            // G,
-        bitRead(serialQueue, SerialQueue_Blue)) {             // OR B digital bits set to on?
-            // Command the LED to change/turn on with the values serialProcessing set for us.
-            LedUpdate(serialLEDR, serialLEDG, serialLEDB);
-            serialLEDChange = false;                               // Set the bit to off.
-        } else if(bitRead(serialQueue, SerialQueue_LEDPulse)) { // Or is it an LED pulse command?
+        if(bitRead(serialQueue, SerialQueue_LEDPulse)) { // Or is it an LED pulse command?
             if(!serialLEDPulsesLast) {                        // Are we just starting?
+                serialQueue &= 0b10001111;                         // Clear static LED bits.
                 serialLEDPulsesLast = 1;                           // Set that we have started.
                 serialLEDPulseRising = true;                       // Set the LED cycle to rising.
                 // Reset all the LEDs to zero, the color map will tell us which one to focus on.
@@ -3736,6 +3740,12 @@ void SerialHandling()
                 serialLEDPulseColorMap = 0b00000000;               // Clear the now-stale pulse color map,
                 bitClear(serialQueue, SerialQueue_LEDPulse);       // And flick the pulse command bit off.
             }
+        } else if(bitRead(serialQueue, SerialQueue_Red) ||           // Are either the R,
+                  bitRead(serialQueue, SerialQueue_Green) ||         // G,
+                  bitRead(serialQueue, SerialQueue_Blue)) {          // OR B digital bits set to on?
+            // Command the LED to change/turn on with the values serialProcessing set for us.
+            LedUpdate(serialLEDR, serialLEDG, serialLEDB);
+            serialLEDChange = false;                               // Set the bit to off.
         } else {                                           // Or, all the LED bits are off, so we should be setting it off entirely.
             LedOff();                                              // Turn it off.
             serialLEDChange = false;                               // We've done the change, so set it off to reduce redundant LED updates.
