@@ -14,8 +14,8 @@
  * @author [That One Seong](SeongsSeongs@gmail.com)
  * @date 2024
  */
-#define OPENFIRE_VERSION 5.1
-#define OPENFIRE_CODENAME "Heartful"
+#define OPENFIRE_VERSION 5.2
+#define OPENFIRE_CODENAME "Dawn"
 
  // For custom builders, remember to check (COMPILING.md) for IDE instructions!
  // ISSUERS: REMEMBER TO SPECIFY YOUR USING A CUSTOM BUILD & WHAT CHANGES ARE MADE TO THE SKETCH; OTHERWISE YOUR ISSUE MAY BE CLOSED!
