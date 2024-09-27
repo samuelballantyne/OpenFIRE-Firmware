@@ -368,10 +368,10 @@ bool buttonPressed = false;                      // Sanity check.
     #endif // USES_SOLENOID
     #ifdef USES_DISPLAY
     bool serialDisplayChange = false;                // Signal of pending display update, sent by Core 2 to be used by Core 1 in dual core configs
-    uint16_t serialLifeCount = 0;//Changed from uint16_t for games with life values > 255
+    uint16_t serialLifeCount = 0;		     // Changed from uint16_t for games with life values > 255
     uint8_t serialAmmoCount = 0;
-    uint16_t MaxLife = 0; //Max value for life in lifebar mode (100%)
-    uint16_t LifePercentage = 0; //Actual value to show in lifebar mode #%
+    uint16_t dispMaxLife = 0; 			     // Max value for life in lifebar mode (100%)
+    uint16_t dispLifePercentage = 0; 		     // Actual value to show in lifebar mode #%
     #endif // USES_DISPLAY
 #endif // MAMEHOOKER
 
@@ -1425,11 +1425,11 @@ void ExecRunMode()
                 // so just do it here using the signal sent by it.
                 if(serialDisplayChange) {
                     if(OLED.serialDisplayType == ExtDisplay::ScreenSerial_Ammo) { OLED.PrintAmmo(serialAmmoCount); }
-					else if(OLED.serialDisplayType == ExtDisplay::ScreenSerial_Life && OLED.lifeBar){ OLED.PrintLife(LifePercentage); } 
+		    else if(OLED.serialDisplayType == ExtDisplay::ScreenSerial_Life && OLED.lifeBar) { OLED.PrintLife(dispLifePercentage); } 
                     else if(OLED.serialDisplayType == ExtDisplay::ScreenSerial_Life) { OLED.PrintLife(serialLifeCount); }
                     else if(OLED.serialDisplayType == ExtDisplay::ScreenSerial_Both && OLED.lifeBar) {
                       OLED.PrintAmmo(serialAmmoCount);
-                      OLED.PrintLife(LifePercentage);
+                      OLED.PrintLife(dispLifePercentage);
                     } 
                     else if(OLED.serialDisplayType == ExtDisplay::ScreenSerial_Both) {
                       OLED.PrintAmmo(serialAmmoCount);
@@ -3266,7 +3266,7 @@ void SerialProcessing()
                 }
                 if(Serial.read() == 'B') {
                     OLED.lifeBar = true;
-		    MaxLife = 0; //Reset Max life
+		    dispMaxLife = 0;
                 } else { OLED.lifeBar = false; }
                 // prevent glitching if currently in pause mode
                 if(gunMode == GunMode_Run) {
@@ -3579,8 +3579,8 @@ void SerialProcessing()
                     }
                     serialLifeCount = atoi(serialInputS);
 		    if (OLED.lifeBar){
-		    	if (serialLifeCount > MaxLife) { MaxLife = serialLifeCount; }
-			LifePercentage = (100 * serialLifeCount) / MaxLife; //Calculate the Life % to show 
+		    	if (serialLifeCount > dispMaxLife) { dispMaxLife = serialLifeCount; }
+			dispLifePercentage = (100 * serialLifeCount) / dispMaxLife; // Calculate the Life % to show 
 		    }
                     break;
                   }
@@ -3772,19 +3772,13 @@ void TriggerFireSimple()
 {
     if(!buttonPressed &&                             // Have we not fired the last cycle,
     offscreenButtonSerial && buttons.offScreen) {    // and are pointing the gun off screen WITH the offScreen button mode set?    
-            if(buttons.analogOutput) {		     //Check if gamepad mode is enabled
-                Gamepad16.press(LightgunButtons::ButtonDesc[BtnIdx_A].reportCode3);	//If gamepad mode is enabled Press A Button
-                } else {
-        	AbsMouse5.press(MOUSE_RIGHT);                // Press the right mouse button
-		} 
+        if(buttons.analogOutput) { Gamepad16.press(LightgunButtons::ButtonDesc[BtnIdx_A].reportCode3); } 
+	else { AbsMouse5.press(MOUSE_RIGHT); } 
         offscreenBShot = true;                       // Mark we pressed the right button via offscreen shot mode,
         buttonPressed = true;                        // Mark so we're not spamming these press events.
     } else if(!buttonPressed) {                      // Else, have we simply not fired the last cycle?
-		if(buttons.analogOutput) {	     //Check if gamepad mode is enabled
-                Gamepad16.press(LightgunButtons::ButtonDesc[BtnIdx_Trigger].reportCode3); //If gamepad mode is enabled Press Trigger Button
-            	} else {
-        	AbsMouse5.press(MOUSE_LEFT);         // We're handling the trigger button press ourselves for a reason.
-		}
+	if(buttons.analogOutput) { Gamepad16.press(LightgunButtons::ButtonDesc[BtnIdx_Trigger].reportCode3); }
+	else { AbsMouse5.press(MOUSE_LEFT); }
         buttonPressed = true;                        // Set this so we won't spam a repeat press event again.
     }
 }
