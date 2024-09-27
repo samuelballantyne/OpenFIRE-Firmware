@@ -62,7 +62,7 @@ jobs:
           submodules: true
           
       - name: Install Arduino-cli
-        uses: arduino/setup-arduino-cli@v1
+        uses: arduino/setup-arduino-cli@v2
 
       # arduino nano uses this just to access LEDs, grr...
       - name: Install Arduino Nano Connect library
