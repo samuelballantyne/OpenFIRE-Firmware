@@ -199,20 +199,20 @@ enum ButtonMask_e {
 // see LightgunButtons::Desc_t, format is: 
 // {pin, report type, report code (ignored for internal), offscreen report type, offscreen report code, gamepad output report type, gamepad output report code, debounce time, debounce mask, label}
 LightgunButtons::Desc_t LightgunButtons::ButtonDesc[] = {
-    {SamcoPreferences::pins.bTrigger, LightgunButtons::ReportType_Internal, MOUSE_LEFT, LightgunButtons::ReportType_Internal, MOUSE_LEFT, LightgunButtons::ReportType_Internal, PAD_RT, 15, BTN_AG_MASK}, // Barry says: "I'll handle this."
-    {SamcoPreferences::pins.bGunA, LightgunButtons::ReportType_Mouse, MOUSE_RIGHT, LightgunButtons::ReportType_Mouse, MOUSE_RIGHT, LightgunButtons::ReportType_Gamepad, PAD_LT, 15, BTN_AG_MASK2},
-    {SamcoPreferences::pins.bGunB, LightgunButtons::ReportType_Mouse, MOUSE_MIDDLE, LightgunButtons::ReportType_Mouse, MOUSE_MIDDLE, LightgunButtons::ReportType_Gamepad, PAD_Y, 15, BTN_AG_MASK2},
-    {SamcoPreferences::pins.bStart, LightgunButtons::ReportType_Keyboard, playerStartBtn, LightgunButtons::ReportType_Keyboard, playerStartBtn, LightgunButtons::ReportType_Gamepad, PAD_START, 20, BTN_AG_MASK2},
-    {SamcoPreferences::pins.bSelect, LightgunButtons::ReportType_Keyboard, playerSelectBtn, LightgunButtons::ReportType_Keyboard, playerSelectBtn, LightgunButtons::ReportType_Gamepad, PAD_SELECT, 20, BTN_AG_MASK2},
-    {SamcoPreferences::pins.bGunUp, LightgunButtons::ReportType_Gamepad, PAD_UP, LightgunButtons::ReportType_Gamepad, PAD_UP, LightgunButtons::ReportType_Gamepad, PAD_UP, 20, BTN_AG_MASK2},
-    {SamcoPreferences::pins.bGunDown, LightgunButtons::ReportType_Gamepad, PAD_DOWN, LightgunButtons::ReportType_Gamepad, PAD_DOWN, LightgunButtons::ReportType_Gamepad, PAD_DOWN, 20, BTN_AG_MASK2},
-    {SamcoPreferences::pins.bGunLeft, LightgunButtons::ReportType_Gamepad, PAD_LEFT, LightgunButtons::ReportType_Gamepad, PAD_LEFT, LightgunButtons::ReportType_Gamepad, PAD_LEFT, 20, BTN_AG_MASK2},
-    {SamcoPreferences::pins.bGunRight, LightgunButtons::ReportType_Gamepad, PAD_RIGHT, LightgunButtons::ReportType_Gamepad, PAD_RIGHT, LightgunButtons::ReportType_Gamepad, PAD_RIGHT, 20, BTN_AG_MASK2},
-    {SamcoPreferences::pins.bGunC, LightgunButtons::ReportType_Mouse, MOUSE_BUTTON4, LightgunButtons::ReportType_Mouse, MOUSE_BUTTON4, LightgunButtons::ReportType_Gamepad, PAD_A, 15, BTN_AG_MASK2},
-    {SamcoPreferences::pins.bPedal, LightgunButtons::ReportType_Mouse, MOUSE_BUTTON4, LightgunButtons::ReportType_Mouse, MOUSE_BUTTON4, LightgunButtons::ReportType_Gamepad, PAD_X, 15, BTN_AG_MASK2},
-    {SamcoPreferences::pins.bPedal2, LightgunButtons::ReportType_Mouse, MOUSE_BUTTON5, LightgunButtons::ReportType_Mouse, MOUSE_BUTTON5, LightgunButtons::ReportType_Gamepad, PAD_B, 15, BTN_AG_MASK2},
-    {SamcoPreferences::pins.bPump, LightgunButtons::ReportType_Mouse, MOUSE_RIGHT, LightgunButtons::ReportType_Mouse, MOUSE_RIGHT, LightgunButtons::ReportType_Gamepad, PAD_LT, 15, BTN_AG_MASK2},
-    {SamcoPreferences::pins.bHome, LightgunButtons::ReportType_Internal, 0, LightgunButtons::ReportType_Internal, 0, LightgunButtons::ReportType_Internal, 0, 15, BTN_AG_MASK2}
+    {SamcoPreferences::pins.bTrigger,  LightgunButtons::ReportType_Internal, MOUSE_LEFT,      LightgunButtons::ReportType_Internal, MOUSE_LEFT,      LightgunButtons::ReportType_Internal, PAD_RT,     15, BTN_AG_MASK}, // Barry says: "I'll handle this."
+    {SamcoPreferences::pins.bGunA,     LightgunButtons::ReportType_Mouse,    MOUSE_RIGHT,     LightgunButtons::ReportType_Mouse,    MOUSE_RIGHT,     LightgunButtons::ReportType_Gamepad,  PAD_LT,     15, BTN_AG_MASK2},
+    {SamcoPreferences::pins.bGunB,     LightgunButtons::ReportType_Mouse,    MOUSE_MIDDLE,    LightgunButtons::ReportType_Mouse,    MOUSE_MIDDLE,    LightgunButtons::ReportType_Gamepad,  PAD_Y,      15, BTN_AG_MASK2},
+    {SamcoPreferences::pins.bStart,    LightgunButtons::ReportType_Keyboard, playerStartBtn,  LightgunButtons::ReportType_Keyboard, playerStartBtn,  LightgunButtons::ReportType_Gamepad,  PAD_START,  20, BTN_AG_MASK2},
+    {SamcoPreferences::pins.bSelect,   LightgunButtons::ReportType_Keyboard, playerSelectBtn, LightgunButtons::ReportType_Keyboard, playerSelectBtn, LightgunButtons::ReportType_Gamepad,  PAD_SELECT, 20, BTN_AG_MASK2},
+    {SamcoPreferences::pins.bGunUp,    LightgunButtons::ReportType_Gamepad,  PAD_UP,          LightgunButtons::ReportType_Gamepad,  PAD_UP,          LightgunButtons::ReportType_Gamepad,  PAD_UP,     20, BTN_AG_MASK2},
+    {SamcoPreferences::pins.bGunDown,  LightgunButtons::ReportType_Gamepad,  PAD_DOWN,        LightgunButtons::ReportType_Gamepad,  PAD_DOWN,        LightgunButtons::ReportType_Gamepad,  PAD_DOWN,   20, BTN_AG_MASK2},
+    {SamcoPreferences::pins.bGunLeft,  LightgunButtons::ReportType_Gamepad,  PAD_LEFT,        LightgunButtons::ReportType_Gamepad,  PAD_LEFT,        LightgunButtons::ReportType_Gamepad,  PAD_LEFT,   20, BTN_AG_MASK2},
+    {SamcoPreferences::pins.bGunRight, LightgunButtons::ReportType_Gamepad,  PAD_RIGHT,       LightgunButtons::ReportType_Gamepad,  PAD_RIGHT,       LightgunButtons::ReportType_Gamepad,  PAD_RIGHT,  20, BTN_AG_MASK2},
+    {SamcoPreferences::pins.bGunC,     LightgunButtons::ReportType_Mouse,    MOUSE_BUTTON4,   LightgunButtons::ReportType_Mouse,    MOUSE_BUTTON4,   LightgunButtons::ReportType_Gamepad,  PAD_A,      15, BTN_AG_MASK2},
+    {SamcoPreferences::pins.bPedal,    LightgunButtons::ReportType_Mouse,    MOUSE_BUTTON4,   LightgunButtons::ReportType_Mouse,    MOUSE_BUTTON4,   LightgunButtons::ReportType_Gamepad,  PAD_X,      15, BTN_AG_MASK2},
+    {SamcoPreferences::pins.bPedal2,   LightgunButtons::ReportType_Mouse,    MOUSE_BUTTON5,   LightgunButtons::ReportType_Mouse,    MOUSE_BUTTON5,   LightgunButtons::ReportType_Gamepad,  PAD_B,      15, BTN_AG_MASK2},
+    {SamcoPreferences::pins.bPump,     LightgunButtons::ReportType_Mouse,    MOUSE_RIGHT,     LightgunButtons::ReportType_Mouse,    MOUSE_RIGHT,     LightgunButtons::ReportType_Gamepad,  PAD_LT,     15, BTN_AG_MASK2},
+    {SamcoPreferences::pins.bHome,     LightgunButtons::ReportType_Internal, 0,               LightgunButtons::ReportType_Internal, 0,               LightgunButtons::ReportType_Internal, 0,          15, BTN_AG_MASK2}
 };
 
 // button count constant
@@ -700,13 +700,10 @@ void setup() {
             profileData[selectedProfile].rightOffset == 0)) { SetMode(GunMode_Calibration); }
             else { SetMode(GunMode_Run); }
     } else {
-        // unofficial official "MiSTer mode" - default to camera -> left stick if trigger's held.
-        // For some reason, doing this through buttons.Poll doesn't work, so just directly read the pin.
-        // (pullup resistors make this normally closed/1 when unpressed, open/0 when pressed.)
+        /* In case someone wants to implement functionality when user holds trigger on boot, here's the former "mister mode" template c:
         if(SamcoPreferences::pins.bTrigger >= 0 && !digitalRead(SamcoPreferences::pins.bTrigger)) {
-            buttons.analogOutput = true;
-            Gamepad16.stickRight = true;
-        }
+            
+        }*/
         // this will turn off the DotStar/RGB LED and ensure proper transition to Run
         SetMode(GunMode_Run);
     }
@@ -3110,6 +3107,25 @@ void SerialProcessing()
                       buttons.analogOutput = true;
                       Gamepad16.stickRight = (Serial.peek() == 'L') ? true: false;
                       break;
+                    // official "MiSTer optimized" mode
+                    case '9':
+                      buttons.analogOutput = true;
+                      Gamepad16.stickRight = true;
+                      // HACK SHACK - testing MiSTer-friendly default gamepad maps
+                      LightgunButtons::ButtonDesc[BtnIdx_Trigger].reportCode3 = PAD_A,
+                      LightgunButtons::ButtonDesc[BtnIdx_A].reportCode3       = PAD_B,
+                      LightgunButtons::ButtonDesc[BtnIdx_B].reportCode3       = PAD_X,
+                      LightgunButtons::ButtonDesc[BtnIdx_Reload].reportCode3  = PAD_Y,
+                      LightgunButtons::ButtonDesc[BtnIdx_Start].reportCode3   = PAD_START,
+                      LightgunButtons::ButtonDesc[BtnIdx_Select].reportCode3  = PAD_SELECT,
+                      LightgunButtons::ButtonDesc[BtnIdx_Up].reportCode3      = PAD_UP,
+                      LightgunButtons::ButtonDesc[BtnIdx_Down].reportCode3    = PAD_DOWN,
+                      LightgunButtons::ButtonDesc[BtnIdx_Left].reportCode3    = PAD_LEFT,
+                      LightgunButtons::ButtonDesc[BtnIdx_Right].reportCode3   = PAD_RIGHT,
+                      LightgunButtons::ButtonDesc[BtnIdx_Pedal].reportCode3   = PAD_LB,
+                      LightgunButtons::ButtonDesc[BtnIdx_Pedal2].reportCode3  = PAD_RB,
+                      LightgunButtons::ButtonDesc[BtnIdx_Pump].reportCode3    = PAD_C;
+                      break;
                 }
                 AbsMouse5.releaseAll();
                 Keyboard.releaseAll();
@@ -3773,12 +3789,12 @@ void TriggerFireSimple()
     if(!buttonPressed &&                             // Have we not fired the last cycle,
     offscreenButtonSerial && buttons.offScreen) {    // and are pointing the gun off screen WITH the offScreen button mode set?    
         if(buttons.analogOutput) { Gamepad16.press(LightgunButtons::ButtonDesc[BtnIdx_A].reportCode3); } 
-	else { AbsMouse5.press(MOUSE_RIGHT); } 
+	      else { AbsMouse5.press(MOUSE_RIGHT); } 
         offscreenBShot = true;                       // Mark we pressed the right button via offscreen shot mode,
         buttonPressed = true;                        // Mark so we're not spamming these press events.
     } else if(!buttonPressed) {                      // Else, have we simply not fired the last cycle?
-	if(buttons.analogOutput) { Gamepad16.press(LightgunButtons::ButtonDesc[BtnIdx_Trigger].reportCode3); }
-	else { AbsMouse5.press(MOUSE_LEFT); }
+	      if(buttons.analogOutput) { Gamepad16.press(LightgunButtons::ButtonDesc[BtnIdx_Trigger].reportCode3); }
+	      else { AbsMouse5.press(MOUSE_LEFT); }
         buttonPressed = true;                        // Set this so we won't spam a repeat press event again.
     }
 }
@@ -3789,11 +3805,11 @@ void TriggerNotFireSimple()
     if(buttonPressed) {                              // Just to make sure we aren't spamming mouse button events.
         if(offscreenBShot) {                         // if it was marked as an offscreen button shot,
             if(buttons.analogOutput) { Gamepad16.release(LightgunButtons::ButtonDesc[BtnIdx_A].reportCode3); }
-	    else { AbsMouse5.release(MOUSE_RIGHT); }
+	          else { AbsMouse5.release(MOUSE_RIGHT); }
             offscreenBShot = false;                  // And set it off.
         } else {                                     // Else,
             if(buttons.analogOutput) { Gamepad16.release(LightgunButtons::ButtonDesc[BtnIdx_Trigger].reportCode3); }
-	    else { AbsMouse5.release(MOUSE_LEFT); }
+	          else { AbsMouse5.release(MOUSE_LEFT); }
         }
         buttonPressed = false;                       // Unset the button pressed bit.
     }
