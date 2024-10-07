@@ -44,12 +44,13 @@
     #define LED_ENABLE
     #include <Adafruit_NeoPixel.h>
 #endif
+/* TODO: Arduino Nano LED support disabled due to instability.
 #ifdef ARDUINO_NANO_RP2040_CONNECT
     #define LED_ENABLE
     // Apparently an LED is included, but has to be communicated with through the WiFi chip (or else it throws compiler errors)
     // That said, LEDs are attached to Pins 25(G), 26(B), 27(R).
     #include <WiFiNINA.h>
-#endif // ARDUINO_NANO
+#endif // ARDUINO_NANO */
 #ifdef SAMCO_FLASH_ENABLE
     #include <Adafruit_SPIFlashBase.h>
 #elif SAMCO_EEPROM_ENABLE
@@ -4553,11 +4554,12 @@ void LedInit()
         neopixel.begin();
     #endif // NEOPIXEL_PIN
  
+    /* Arduino Nano LED support disabled due to instability.
     #ifdef ARDUINO_NANO_RP2040_CONNECT
     pinMode(LEDR, OUTPUT);
     pinMode(LEDG, OUTPUT);
     pinMode(LEDB, OUTPUT);
-    #endif // NANO_RP2040
+    #endif // NANO_RP2040 */
     LedUpdate(255, 0, 0);
 }
 
@@ -4607,6 +4609,7 @@ void SetLedPackedColor(uint32_t color)
     }
 #endif // FOURPIN_LED
 
+/* Arduino Nano LED support disabled due to instability.
 #ifdef ARDUINO_NANO_RP2040_CONNECT
     // in case the color bytes were already flipped before, as Arduino Nano also uses power sink pins i.e. common anode
     if(ledIsValid && !SamcoPreferences::toggles.commonAnode) {
@@ -4617,7 +4620,7 @@ void SetLedPackedColor(uint32_t color)
     analogWrite(LEDR, r);
     analogWrite(LEDG, g);
     analogWrite(LEDB, b);
-#endif // NANO_RP2040
+#endif // NANO_RP2040 */
 }
 
 void LedOff()
@@ -4665,6 +4668,7 @@ void LedUpdate(byte r, byte g, byte b)
         }
     #endif // FOURPIN_LED
 
+    /* Arduino Nano LED support disabled due to instability.
     #ifdef ARDUINO_NANO_RP2040_CONNECT
         #ifdef FOURPIN_LED
         // Nano's builtin is a common anode, so we use that logic by default if it's enabled on the external 4-pin;
@@ -4682,7 +4686,7 @@ void LedUpdate(byte r, byte g, byte b)
         analogWrite(LEDR, r);
         analogWrite(LEDG, g);
         analogWrite(LEDB, b);
-    #endif // NANO_RP2040
+    #endif // NANO_RP2040 */
 }
 
 // Macro that sets LEDs color depending on the mode it's set to
