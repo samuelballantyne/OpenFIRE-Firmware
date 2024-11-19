@@ -312,13 +312,6 @@ int moveXAxisArr[3] = {0, 0, 0};
 int moveYAxisArr[3] = {0, 0, 0};
 int moveIndex = 0;
 
-int32_t mouseCurrentX;
-int32_t mouseCurrentY;
-int32_t mouseTargetX;
-int32_t mouseTargetY;
-bool mouseMoving = false;
-
-
 // For offscreen button stuff:
 bool offscreenButton = false;                    // Does shooting offscreen also send a button input (for buggy games that don't recognize off-screen shots)? Default to off.
 bool offscreenBShot = false;                     // For offscreenButton functionality, to track if we shot off the screen.
