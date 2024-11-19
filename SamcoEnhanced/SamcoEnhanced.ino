@@ -1770,14 +1770,19 @@ void ExecCalMode()
     profileData[selectedProfile].leftOffset = 0;
     profileData[selectedProfile].rightOffset = 0;
 
-    // force center mouse to center
+    // Force center mouse to center
     AbsMouse5.move(32768/2, 32768/2);
 
-    // Initialize current mouse positions (declare these variables appropriately)
-    mouseCurrentX = 32768 / 2;
-    mouseCurrentY = 32768 / 2;
+    // Initialize current mouse positions (local variables)
+    int32_t mouseCurrentX = 32768 / 2;
+    int32_t mouseCurrentY = 32768 / 2;
 
-    // jack in, CaliMan, execute!!!
+    // Initialize variables for incremental movement
+    int32_t mouseTargetX = mouseCurrentX;
+    int32_t mouseTargetY = mouseCurrentY;
+    bool mouseMoving = false;
+
+    // Jack in, CaliMan, execute!!!
     SetMode(GunMode_Calibration);
     Serial.printf("CalStage: %d\r\n", Cali_Init);
 
@@ -1827,25 +1832,27 @@ void ExecCalMode()
             profileData[selectedProfile].TRled = _TRled;
             profileData[selectedProfile].adjX = _adjX;
             profileData[selectedProfile].adjY = _adjY;
-            // re-print the profile
+            // Re-print the profile
             stateFlags |= StateFlag_PrintSelectedProfile;
-            // re-apply the cal stored in the profile
+            // Re-apply the cal stored in the profile
             if(dockedCalibrating) {
                 SetMode(GunMode_Docked);
                 dockedCalibrating = false;
             } else {
-                // return to pause mode
+                // Return to pause mode
                 SetMode(GunMode_Run);
             }
             return;
         } else if(buttons.pressed == BtnMask_Trigger && !mouseMoving) {
             calStage++;
             Serial.printf("CalStage: %d\r\n", calStage);
-            // make sure our messages go through, or else the HID reports eats UART.
+            // Ensure our messages go through, or else the HID reports eat UART.
             Serial.flush();
             switch(calStage) {
                 case Cali_Init:
+                    // Initial state, nothing to do
                     break;
+
                 case Cali_Top:
                     // Reset Offsets
                     topOffset = 0;
@@ -1854,34 +1861,58 @@ void ExecCalMode()
                     rightOffset = 0;
                     // Set Cam center offsets
                     if(profileData[selectedProfile].irLayout) {
-                        profileData[selectedProfile].adjX = (OpenFIREdiamond.testMedianX() - (512 << 2)) * cos(OpenFIREdiamond.Ang()) - (OpenFIREdiamond.testMedianY() - (384 << 2)) * sin(OpenFIREdiamond.Ang()) + (512 << 2);
-                        profileData[selectedProfile].adjY = (OpenFIREdiamond.testMedianX() - (512 << 2)) * sin(OpenFIREdiamond.Ang()) + (OpenFIREdiamond.testMedianY() - (384 << 2)) * cos(OpenFIREdiamond.Ang()) + (384 << 2);
+                        profileData[selectedProfile].adjX = (OpenFIREdiamond.testMedianX() - (512 << 2)) * cos(OpenFIREdiamond.Ang()) -
+                            (OpenFIREdiamond.testMedianY() - (384 << 2)) * sin(OpenFIREdiamond.Ang()) + (512 << 2);
+                        profileData[selectedProfile].adjY = (OpenFIREdiamond.testMedianX() - (512 << 2)) * sin(OpenFIREdiamond.Ang()) +
+                            (OpenFIREdiamond.testMedianY() - (384 << 2)) * cos(OpenFIREdiamond.Ang()) + (384 << 2);
                     } else {
-                        profileData[selectedProfile].adjX = (OpenFIREsquare.testMedianX() - (512 << 2)) * cos(OpenFIREsquare.Ang()) - (OpenFIREsquare.testMedianY() - (384 << 2)) * sin(OpenFIREsquare.Ang()) + (512 << 2);
-                        profileData[selectedProfile].adjY = (OpenFIREsquare.testMedianX() - (512 << 2)) * sin(OpenFIREsquare.Ang()) + (OpenFIREsquare.testMedianY() - (384 << 2)) * cos(OpenFIREsquare.Ang()) + (384 << 2);
-                        // Work out Led locations by assuming height is 100%
-                        profileData[selectedProfile].TLled = (res_x / 2) - ( (OpenFIREsquare.W() * (res_y  / OpenFIREsquare.H()) ) / 2);
-                        profileData[selectedProfile].TRled = (res_x / 2) + ( (OpenFIREsquare.W() * (res_y  / OpenFIREsquare.H()) ) / 2);
+                        profileData[selectedProfile].adjX = (OpenFIREsquare.testMedianX() - (512 << 2)) * cos(OpenFIREsquare.Ang()) -
+                            (OpenFIREsquare.testMedianY() - (384 << 2)) * sin(OpenFIREsquare.Ang()) + (512 << 2);
+                        profileData[selectedProfile].adjY = (OpenFIREsquare.testMedianX() - (512 << 2)) * sin(OpenFIREsquare.Ang()) +
+                            (OpenFIREsquare.testMedianY() - (384 << 2)) * cos(OpenFIREsquare.Ang()) + (384 << 2);
+                        // Work out LED locations by assuming height is 100%
+                        profileData[selectedProfile].TLled = (res_x / 2) - ((OpenFIREsquare.W() * (res_y  / OpenFIREsquare.H())) / 2);
+                        profileData[selectedProfile].TRled = (res_x / 2) + ((OpenFIREsquare.W() * (res_y  / OpenFIREsquare.H())) / 2);
                     }
 
                     // Update Cam centre in perspective library
                     OpenFIREper.source(profileData[selectedProfile].adjX, profileData[selectedProfile].adjY);
                     OpenFIREper.deinit(0);
+
+                    // Set mouse movement to top position
+                    mouseTargetX = 32768 / 2;
+                    mouseTargetY = 0;
+                    mouseMoving = true;
                     break;
 
                 case Cali_Bottom:
                     // Set Offset buffer
                     topOffset = mouseY;
+
+                    // Set mouse movement to bottom position
+                    mouseTargetX = 32768 / 2;
+                    mouseTargetY = 32767;
+                    mouseMoving = true;
                     break;
 
                 case Cali_Left:
                     // Set Offset buffer
                     bottomOffset = (res_y - mouseY);
+
+                    // Set mouse movement to left position
+                    mouseTargetX = 0;
+                    mouseTargetY = 32768 / 2;
+                    mouseMoving = true;
                     break;
 
                 case Cali_Right:
                     // Set Offset buffer
                     leftOffset = mouseX;
+
+                    // Set mouse movement to right position
+                    mouseTargetX = 32767;
+                    mouseTargetY = 32768 / 2;
+                    mouseMoving = true;
                     break;
 
                 case Cali_Center:
@@ -1893,23 +1924,31 @@ void ExecCalMode()
                     profileData[selectedProfile].bottomOffset = bottomOffset;
                     profileData[selectedProfile].leftOffset = leftOffset;
                     profileData[selectedProfile].rightOffset = rightOffset;
-                    // Mouse movement will be handled in CaliMousePosMove
+
+                    // Move back to center calibration point
+                    mouseTargetX = 32768 / 2;
+                    mouseTargetY = 32768 / 2;
+                    mouseMoving = true;
                     break;
 
                 case Cali_Verify:
                     // Apply new Cam center offsets with Offsets applied
                     if(profileData[selectedProfile].irLayout) {
-                        profileData[selectedProfile].adjX = (OpenFIREdiamond.testMedianX() - (512 << 2)) * cos(OpenFIREdiamond.Ang()) - (OpenFIREdiamond.testMedianY() - (384 << 2)) * sin(OpenFIREdiamond.Ang()) + (512 << 2);
-                        profileData[selectedProfile].adjY = (OpenFIREdiamond.testMedianX() - (512 << 2)) * sin(OpenFIREdiamond.Ang()) + (OpenFIREdiamond.testMedianY() - (384 << 2)) * cos(OpenFIREdiamond.Ang()) + (384 << 2);
+                        profileData[selectedProfile].adjX = (OpenFIREdiamond.testMedianX() - (512 << 2)) * cos(OpenFIREdiamond.Ang()) -
+                            (OpenFIREdiamond.testMedianY() - (384 << 2)) * sin(OpenFIREdiamond.Ang()) + (512 << 2);
+                        profileData[selectedProfile].adjY = (OpenFIREdiamond.testMedianX() - (512 << 2)) * sin(OpenFIREdiamond.Ang()) +
+                            (OpenFIREdiamond.testMedianY() - (384 << 2)) * cos(OpenFIREdiamond.Ang()) + (384 << 2);
                     } else {
-                        profileData[selectedProfile].adjX = (OpenFIREsquare.testMedianX() - (512 << 2)) * cos(OpenFIREsquare.Ang()) - (OpenFIREsquare.testMedianY() - (384 << 2)) * sin(OpenFIREsquare.Ang()) + (512 << 2);
-                        profileData[selectedProfile].adjY = (OpenFIREsquare.testMedianX() - (512 << 2)) * sin(OpenFIREsquare.Ang()) + (OpenFIREsquare.testMedianY() - (384 << 2)) * cos(OpenFIREsquare.Ang()) + (384 << 2);
+                        profileData[selectedProfile].adjX = (OpenFIREsquare.testMedianX() - (512 << 2)) * cos(OpenFIREsquare.Ang()) -
+                            (OpenFIREsquare.testMedianY() - (384 << 2)) * sin(OpenFIREsquare.Ang()) + (512 << 2);
+                        profileData[selectedProfile].adjY = (OpenFIREsquare.testMedianX() - (512 << 2)) * sin(OpenFIREsquare.Ang()) +
+                            (OpenFIREsquare.testMedianY() - (384 << 2)) * cos(OpenFIREsquare.Ang()) + (384 << 2);
                     }
                     // Update Cam centre in perspective library
                     OpenFIREper.source(profileData[selectedProfile].adjX, profileData[selectedProfile].adjY);
                     OpenFIREper.deinit(0);
 
-                    // let the user test.
+                    // Let the user test.
                     SetMode(GunMode_Verification);
                     while(gunMode == GunMode_Verification) {
                         buttons.Poll();
@@ -1917,17 +1956,17 @@ void ExecCalMode()
                             irPosUpdateTick = 0;
                             GetPosition();
                         }
-                        // If it's good, move onto cali finish.
+                        // If it's good, move onto calibration finish.
                         if(buttons.pressed == BtnMask_Trigger) {
                             calStage++;
-                            // stay in Verification Mode, as the code outside of the Cali loop will catch us.
+                            // Stay in Verification Mode; the code outside of the calibration loop will catch us.
                             break;
-                        // Press A/B to restart cali for current profile
+                        // Press A/B to restart calibration for current profile
                         } else if(buttons.pressedReleased & ExitPauseModeHoldBtnMask) {
                             calStage = 0;
                             Serial.printf("CalStage: %d\r\n", Cali_Init);
                             Serial.flush();
-                            // (re)set current values to factory defaults
+                            // (Re)set current values to factory defaults
                             profileData[selectedProfile].topOffset = 0;
                             profileData[selectedProfile].bottomOffset = 0;
                             profileData[selectedProfile].leftOffset = 0;
@@ -1936,10 +1975,10 @@ void ExecCalMode()
                             profileData[selectedProfile].adjY = 384 << 2;
                             SetMode(GunMode_Calibration);
                             AbsMouse5.move(32768/2, 32768/2);
-                        // Press C/Home to exit wholesale without committing new cali values
+                        // Press C/Home to exit without committing new calibration values
                         } else if(buttons.pressedReleased & ExitPauseModeBtnMask && !justBooted) {
                             Serial.printf("CalStage: %d\r\n", Cali_Verify+1);
-                            // Reapplying backed up data
+                            // Reapply backed-up data
                             profileData[selectedProfile].topOffset = _topOffset;
                             profileData[selectedProfile].bottomOffset = _bottomOffset;
                             profileData[selectedProfile].leftOffset = _leftOffset;
@@ -1948,9 +1987,9 @@ void ExecCalMode()
                             profileData[selectedProfile].TRled = _TRled;
                             profileData[selectedProfile].adjX = _adjX;
                             profileData[selectedProfile].adjY = _adjY;
-                            // re-print the profile
+                            // Re-print the profile
                             stateFlags |= StateFlag_PrintSelectedProfile;
-                            // re-apply the cal stored in the profile
+                            // Re-apply the calibration stored in the profile
                             if(dockedCalibrating) {
                                 SetMode(GunMode_Docked);
                                 dockedCalibrating = false;
@@ -1961,12 +2000,14 @@ void ExecCalMode()
                         }
                     }
                     break;
+
+                default:
+                    break;
             }
-            CaliMousePosMove(calStage);
         }
     }
 
-    // Break Cali
+    // Break calibration
     if(justBooted) {
         // If this is an initial calibration, save it immediately!
         stateFlags |= StateFlag_SavePreferencesEn;
@@ -1998,42 +2039,6 @@ void ExecCalMode()
         }
     #endif // USES_RUMBLE
     Serial.printf("CalStage: %d\r\n", Cali_Verify+1);
-}
-
-
-// Locking function moving from cali point to point
-void CaliMousePosMove(uint8_t caseNumber)
-{
-    // Set the target positions based on the calibration stage
-    switch(caseNumber) {
-        case Cali_Top:
-            mouseTargetX = 32768 / 2;
-            mouseTargetY = 0;
-            mouseMoving = true;
-            break;
-        case Cali_Bottom:
-            mouseTargetX = 32768 / 2;
-            mouseTargetY = 32767;
-            mouseMoving = true;
-            break;
-        case Cali_Left:
-            mouseTargetX = 0;
-            mouseTargetY = 32768 / 2;
-            mouseMoving = true;
-            break;
-        case Cali_Right:
-            mouseTargetX = 32767;
-            mouseTargetY = 32768 / 2;
-            mouseMoving = true;
-            break;
-        case Cali_Center:
-            mouseTargetX = 32768 / 2;
-            mouseTargetY = 32768 / 2;
-            mouseMoving = true;
-            break;
-        default:
-            break;
-    }
 }
 
 
