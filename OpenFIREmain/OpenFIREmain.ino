@@ -1230,15 +1230,26 @@ void SetProfileSelection(const bool &isIncrement)
 
 void SelectCalProfileFromBtnMask(const uint32_t &mask)
 {
-    // only check if buttons are set in the mask
-    if(!mask)
+    if(!mask) return;
+        
+    if(mask == FW_Const::BtnMask_A) {
+        FW_Common::SelectCalProfile(0);
         return;
+    }
 
-    for(uint i = 1; i <= PROFILE_COUNT; ++i) {
-        if(bitRead(mask, i)) {
-            FW_Common::SelectCalProfile(i-1);
-            return;
-        }
+    if(mask == FW_Const::BtnMask_B) {
+        FW_Common::SelectCalProfile(1);
+        return;
+    }
+
+    if(mask == FW_Const::BtnMask_Start) {
+        FW_Common::SelectCalProfile(2);
+        return;
+    }
+
+    if(mask == FW_Const::BtnMask_Select) {
+        FW_Common::SelectCalProfile(3);
+        return;
     }
 }
 
