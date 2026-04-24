@@ -925,7 +925,7 @@ void FW_Common::SetLedColorFromMode()
 {
     switch(gunMode) {
     case FW_Const::GunMode_Calibration:
-        OF_RGB::SetLedPackedColor(OF_RGB::CalModeColor);
+        OF_RGB::SetLedPackedColor(OF_Prefs::profiles[OF_Prefs::currentProfile].color);
         break;
     case FW_Const::GunMode_Pause:
         OF_RGB::SetLedPackedColor(OF_Prefs::profiles[OF_Prefs::currentProfile].color);
